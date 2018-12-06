@@ -1,14 +1,33 @@
 <?php
 namespace App\Http\Controllers;
-use App\Country;
+use App\Models\Country;
+use App\Repositories\CountryRepository;
 use Illuminate\Http\Request;
 
 class CountryController extends Controller
 {
-    public function index()
+    public function index(CountryRepository $countryRepo)
     {
-        $countries = Country::all();
-        return view('country.index', compact('countries'));
+        $countries = $countryRepo->getAll('CountryOrderBy');
+        return view('country.index', ["countries"=>$countries]);
+    }
+
+    public function orderBy($column)
+    {
+        if(session()->get('CountryOrderBy[0]') == $column)
+          if(session()->get('CountryOrderBy[1]') == 'desc')
+            session()->put('CountryOrderBy[1]', 'asc');
+          else
+            session()->put('CountryOrderBy[1]', 'desc');
+        else
+        {
+          session()->put('CountryOrderBy[2]', session()->get('CountryOrderBy[0]'));
+          session()->put('CountryOrderBy[0]', $column);
+          session()->put('CountryOrderBy[3]', session()->get('CountryOrderBy[1]'));
+          session()->put('CountryOrderBy[1]', 'asc');
+        }
+
+        return redirect( $_SERVER['HTTP_REFERER'] );
     }
 
     public function create()
@@ -31,23 +50,33 @@ class CountryController extends Controller
         $country->continent = $request->continent;
         $country->save();
 
-        return redirect(route('panstwo.index'));
+        return redirect( $request->history_view );
     }
 
-    public function show(Country $panstwo)
+    public function show($id, $view='', CountryRepository $countryRepo)
     {
-        $country = $panstwo;
-        $next = Country::where('id', '>', $country->id)->first();
-        if(empty($next)) $next = Country::all()->first();
-        $previous = Country::where('id', '<', $country->id)->orderBy('id', 'desc')->first();
-        if(empty($previous)) $previous = Country::all()->last();
-        return view('country.show', compact('country'))->with('previous', $previous)->with('next', $next);
+        if( empty(session()->get('countryView')) )  session()->put('countryView', 'showInfo');
+        if($view)  session()->put('countryView', $view);
+        $country = $countryRepo -> find($id);
+        $previous = $countryRepo->PreviousRecordId($id);
+        $next = $countryRepo->NextRecordId($id);
+
+        switch( session()->get('countryView') ) {
+          case 'showInfo':
+              return view('country.show', ["country"=>$country, "previous"=>$previous, "next"=>$next])
+                  -> nest('subView', 'country.showInfo', ["country"=>$country]);
+              exit;
+          break;
+          default:
+              printf('<p style="background: #bb0; color: #f00; font-size: x-large; text-align: center; border: 3px solid red; padding: 5px;">Widok %s nieznany</p>', session()->get('countryView'));
+              exit;
+          break;
+        }
     }
 
     public function edit(Country $panstwo)
     {
-        $country = $panstwo;
-        return view('country.edit', compact('country'));
+        return view('country.edit', ["country"=>$panstwo]);
     }
 
     public function update(Request $request, Country $panstwo)
@@ -64,12 +93,12 @@ class CountryController extends Controller
         $country->continent = $request->continent;
         $country->save();
 
-        return redirect(route('panstwo.index'));
+        return redirect( $request->history_view );
     }
 
     public function destroy(Country $panstwo)
     {
         $panstwo->delete();
-        return redirect()->route('panstwo.index');
+        return redirect( $_SERVER['HTTP_REFERER'] );
     }
 }

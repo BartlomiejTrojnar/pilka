@@ -1,4 +1,5 @@
 @extends('layouts.app')
+
 @section('header')
   <h1>{{ $country->name }}</h1>
   <aside id="strzalka_l">
@@ -14,7 +15,16 @@
 @endsection
 
 @section('main-content')
-  <p>{{ $country->id }}</p>
-  <p>{{ $country->symbol }}</p>
-  <p>{{ $country->continent }}</p>
+  <ul class="nav nav-tabs nav-justified">
+    <li class="nav-item"><a class="nav-link" href="{{ url('panstwo/'.$country->id.'/showInfo') }}">informacje</a></li>
+    <li class="nav-item"><a class="nav-link" href="{{ url('panstwo/'.$country->id.'/showPlayers') }}">zawodnicy</a></li>
+    <li class="nav-item"><a class="nav-link" href="{{ url('panstwo/'.$country->id.'/showClubs') }}">kluby</a></li>
+    <li class="nav-item"><a class="nav-link" href="{{ url('panstwo/'.$country->id.'/showStadiums') }}">stadiony</a></li>
+    <li class="nav-item"><a class="nav-link" href="{{ url('panstwo/'.$country->id.'/showReferees') }}">sędziowie</a></li>
+    <li class="nav-item"><a class="nav-link" href="{{ route('panstwo.index') }}">powrót</a></li>
+  </ul>
+
+  <?php
+    echo $subView;
+  ?>
 @endsection

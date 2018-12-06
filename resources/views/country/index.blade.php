@@ -5,9 +5,9 @@
     <thead>
       <tr>
         <th>id</th>
-        <th>symbol</th>
-        <th>nazwa</th>
-        <th>kontynent</th>
+        <th><a href="{{ url('/panstwo/orderBy/symbol') }}">symbol</a></th>
+        <th><a href="{{ url('/panstwo/orderBy/name') }}">nazwa</a></th>
+        <th><a href="{{ url('/panstwo/orderBy/continent') }}">kontynent</a></th>
         <th colspan="2">+/-</th>
       </tr>
     </thead>
