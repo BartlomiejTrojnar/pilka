@@ -8,8 +8,10 @@ class CountryController extends Controller
 {
     public function index(CountryRepository $countryRepo)
     {
-        $countries = $countryRepo->getAll('CountryOrderBy');
-        return view('country.index', ["countries"=>$countries]);
+        $countries = $countryRepo->getAllSortedAndPaginate();
+        return view('country.index')
+            -> nest('countryTable', 'country.table', ["countries"=>$countries, "subTitle"=>""]);
+
     }
 
     public function orderBy($column)

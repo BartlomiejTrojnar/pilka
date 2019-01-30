@@ -2,7 +2,7 @@
 Route::get('/', 'CountryController@index');
 
 Route::resource('/panstwo', 'CountryController');
-Route::get('/panstwo/orderBy/{column}', 'CountryController@orderBy');
+Route::get('/panstwo/orderBy/{column}', 'CountryController@orderBy')->name('panstwo.orderBy');
 
 Route::resource('/sedzia', 'RefereeController');
 Route::resource('/stadion', 'StadiumController');
