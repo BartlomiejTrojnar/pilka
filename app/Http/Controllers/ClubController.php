@@ -1,42 +1,63 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Club;
+use App\Repositories\ClubRepository;
+
 use Illuminate\Http\Request;
 
 class ClubController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function index(ClubRepository $clubRepo)
     {
-        //
+        $clubs = $clubRepo->getAllSortedAndPaginate();
+        return view('club.index')
+            -> nest('clubTable', 'club.table', ["clubs"=>$clubs, "subTitle"=>""]);
+
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    public function orderBy($column)
+    {
+        if(session()->get('ClubOrderBy[0]') == $column)
+          if(session()->get('ClubOrderBy[1]') == 'desc')
+            session()->put('ClubOrderBy[1]', 'asc');
+          else
+            session()->put('ClubOrderBy[1]', 'desc');
+        else
+        {
+          session()->put('ClubOrderBy[2]', session()->get('ClubOrderBy[0]'));
+          session()->put('ClubOrderBy[0]', $column);
+          session()->put('ClubOrderBy[3]', session()->get('ClubOrderBy[1]'));
+          session()->put('ClubOrderBy[1]', 'asc');
+        }
+
+        return redirect( $_SERVER['HTTP_REFERER'] );
+    }
+
     public function create()
     {
-        //
+        return view('club.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+          'name' => 'required',
+          'city' => 'required',
+          'country_id' => 'required',
+        ]);
+
+        $club = new Club;
+        $club->id = $request->id;
+        $club->name = $request->name;
+        $club->city = $request->city;
+        $club->year_of_establishment = $request->year_of_establishment;
+        $club->country_id = $request->country_id;
+        $club->save();
+
+        return redirect( $request->history_view );
     }
+
 
     /**
      * Display the specified resource.
