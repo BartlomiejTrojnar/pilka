@@ -22,7 +22,7 @@
         <td><a href="{{ route('klub.show', $club->id) }}">{{ $club->name }}</a></td>
         <td>{{ $club->city }}</td>
         <td>{{ $club->year_of_establishment }}</td>
-        <td><a href="{{ route('panstwo.show', $club->country_id) }}">{{ $club->country_id }}</a></td>
+        <td><a href="{{ route('panstwo.show', $club->country_id) }}">{{ $club->country->symbol }}</a></td>
         <td class="edit"><a class="btn btn-primary" href="{{ route('klub.edit', $club->id) }}">
             <img class="edit" src="{{ asset('css/zmiana.png') }}" alt="--">
         </a></td>
@@ -36,7 +36,7 @@
       </tr>
     @endforeach
 
-    <tr class="create"><td colspan="6">
+    <tr class="create"><td colspan="7">
         <a class="btn btn-primary" href="{{ route('klub.create') }}"><img class="create" src="{{ asset('css/plus.png') }}" /></a>
     </td></tr>
   </tbody>

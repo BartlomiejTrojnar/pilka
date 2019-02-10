@@ -1,8 +1,9 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Club;
+use App\Models\Club;
 use App\Repositories\ClubRepository;
+use App\Models\Country;
 
 use Illuminate\Http\Request;
 
@@ -36,7 +37,8 @@ class ClubController extends Controller
 
     public function create()
     {
-        return view('club.create');
+        $countries = Country::all('name', 'id');
+        return view('club.create', ["countries"=>$countries]);
     }
 
     public function store(Request $request)
@@ -70,37 +72,39 @@ class ClubController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Club  $club
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Club $club)
+
+    public function edit($id)
     {
-        //
+        $club = Club::find($id);
+        $countries = Country::all();
+        return view('club.edit', ["club"=>$club])
+             ->nest('countrySelectField', 'country.selectField', ["countries"=>$countries, "selectedCountry"=>$club->country_id]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Club  $club
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Club $club)
+    public function update(Request $request, $id)
     {
-        //
+        $club = Club::find($id);
+
+        $this->validate($request, [
+          'name' => 'required',
+          'city' => 'required',
+          'year_of_establishment' => 'required',
+          'country_id' => 'required',
+        ]);
+
+        $club->name = $request->name;
+        $club->city = $request->city;
+        $club->year_of_establishment = $request->year_of_establishment;
+        $club->country_id = $request->country_id;
+        $club->save();
+
+        return redirect( $request->history_view );
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Club  $club
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Club $club)
+    public function destroy($id)
     {
-        //
+        $club = Club::find($id);
+        $club->delete();
+        return redirect( $_SERVER['HTTP_REFERER'] );
     }
 }

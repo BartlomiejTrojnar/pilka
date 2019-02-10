@@ -58,7 +58,6 @@ class RefereeController extends Controller
              ->nest('countrySelectField', 'country.selectField', ["countries"=>$countries, "selectedCountry"=>$referee->country_id]);
     }
 
-
     public function update(Request $request, $id)
     {
         $referee = Referee::find($id);
