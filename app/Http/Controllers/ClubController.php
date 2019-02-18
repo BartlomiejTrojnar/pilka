@@ -13,7 +13,7 @@ class ClubController extends Controller
     {
         $clubs = $clubRepo->getAllSortedAndPaginate();
         return view('club.index')
-            -> nest('clubTable', 'club.table', ["clubs"=>$clubs, "subTitle"=>""]);
+            -> nest('clubTable', 'club.table', ["clubs"=>$clubs, "subTitle"=>"", "links"=>true]);
 
     }
 
@@ -60,18 +60,25 @@ class ClubController extends Controller
         return redirect( $request->history_view );
     }
 
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Club  $club
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Club $club)
+    public function show($id, $view='', ClubRepository $clubRepo)
     {
-        //
-    }
+        if(empty(session()->get('clubView')))  session()->put('clubView', 'showInfo');
+        if($view)  session()->put('clubView', $view);
+        $club = $clubRepo -> find($id);
+        $previous = $clubRepo -> PreviousRecordId($id);
+        $next = $clubRepo -> NextRecordId($id);
 
+        switch(session()->get('clubView')) {
+          case 'tshowInfo':
+              return view('club.show', ["club"=>$club, "previous"=>$previous, "next"=>$next])
+                  -> nest('subView', 'club.showInfo', ["club"=>$club]);
+          break;
+          default:
+              printf('<p style="background: #bb0; color: #f00; font-size: x-large; text-align: center; border: 3px solid red; padding: 5px;">Widok %s nieznany</p>', session()->get('clubView'));
+              exit;
+          break;
+        }
+    }
 
     public function edit($id)
     {
