@@ -11,7 +11,6 @@ class CountryController extends Controller
         $countries = $countryRepo->getAllSortedAndPaginate();
         return view('country.index')
             -> nest('countryTable', 'country.table', ["countries"=>$countries, "subTitle"=>""]);
-
     }
 
     public function orderBy($column)
@@ -68,6 +67,10 @@ class CountryController extends Controller
               return view('country.show', ["country"=>$country, "previous"=>$previous, "next"=>$next])
                   -> nest('subView', 'country.showInfo', ["country"=>$country]);
               exit;
+          break;
+          case 'change':
+              session()->put('countrySelected', $id);
+              return redirect( $_SERVER['HTTP_REFERER'] );
           break;
           default:
               printf('<p style="background: #bb0; color: #f00; font-size: x-large; text-align: center; border: 3px solid red; padding: 5px;">Widok %s nieznany</p>', session()->get('countryView'));

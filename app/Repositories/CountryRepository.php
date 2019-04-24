@@ -8,6 +8,13 @@ class CountryRepository extends BaseRepository {
       $this->model = $model;
   }
 
+  public function getAllSorted() {
+      return $this->model
+        -> orderBy( session()->get('CountryOrderBy[0]'), session()->get('CountryOrderBy[1]') )
+        -> orderBy( session()->get('CountryOrderBy[2]'), session()->get('CountryOrderBy[3]') )
+        -> get();
+  }
+
   public function getAllSortedAndPaginate() {
       return $this->model
         -> orderBy( session()->get('CountryOrderBy[0]'), session()->get('CountryOrderBy[1]') )

@@ -40,5 +40,12 @@ use App\Referee;
       <li><a href="{{ route('klub.index') }}">kluby</a></li>
     </ul>
   </nav>
+
+  <!-- Scripts -->
+  <script src="{{ asset('js/app.js') }}"></script>
+  <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+
+  @section('java-script')
+    @show
 </body>
 </html>

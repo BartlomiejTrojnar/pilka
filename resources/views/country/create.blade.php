@@ -18,8 +18,8 @@
       </tr>
       <tr class="submit">
         <td colspan="2">
-          <button type="submit">dodaj</button>
-          <a href="{{ route('panstwo.index') }}">anuluj</a>
+          <button class="btn btn-primary" type="submit">dodaj</button>
+          <a class="btn btn-primary" href="{{ route('panstwo.index') }}">anuluj</a>
         </td>
       </tr>
     </table>

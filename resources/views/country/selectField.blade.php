@@ -1,7 +1,7 @@
 <select name="country_id">
   <option value="0">- wybierz państwo -</option>
   @foreach($countries as $country)
-    @if($country->id == $selectedCountry)
+    @if($country->id == $countrySelected)
       <option selected="selected" value="{{$country->id}}">
         {{$country->symbol}} ({{$country->name}})
       </option>

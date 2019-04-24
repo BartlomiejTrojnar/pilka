@@ -1,15 +1,45 @@
 <?php
 namespace App\Http\Controllers;
-use App\Referee;
-use App\Country;
+use App\Models\Referee;
+use App\Repositories\RefereeRepository;
+
+use App\Models\Country;
+use App\Repositories\CountryRepository;
 use Illuminate\Http\Request;
 
 class RefereeController extends Controller
 {
-    public function index()
+    public function index(RefereeRepository $refereeRepo, CountryRepository $countryRepo)
     {
-        $referees = Referee::all();
-        return view('referee.index', compact('referees'));
+        $countries = $countryRepo->getAllSorted();
+        $countrySelected = session()->get('countrySelected');
+        $countrySelectField = view('country.selectField', ["countries"=>$countries, "countrySelected"=>$countrySelected]);
+
+        $referees = $refereeRepo -> getAllSortedAndPaginate();
+        if( $countrySelected ) {
+            $referees = Referee::where('country_id', $countrySelected);
+            $referees = $refereeRepo -> sortAndPaginateRecords($referees);
+        }
+        return view('referee.index')
+            -> nest('refereeTable', 'referee.table', ["referees"=>$referees, "links"=>true, "subTitle"=>"", "countrySelectField"=>$countrySelectField]);
+    }
+
+    public function orderBy($column)
+    {
+        if(session()->get('RefereeOrderBy[0]') == $column)
+          if(session()->get('RefereeOrderBy[1]') == 'desc')
+            session()->put('RefereeOrderBy[1]', 'asc');
+          else
+            session()->put('RefereeOrderBy[1]', 'desc');
+        else
+        {
+          session()->put('RefereeOrderBy[2]', session()->get('RefereeOrderBy[0]'));
+          session()->put('RefereeOrderBy[0]', $column);
+          session()->put('RefereeOrderBy[3]', session()->get('RefereeOrderBy[1]'));
+          session()->put('RefereeOrderBy[1]', 'asc');
+        }
+
+        return redirect( $_SERVER['HTTP_REFERER'] );
     }
 
     public function create()
@@ -50,12 +80,12 @@ class RefereeController extends Controller
         //
     }
 
-    public function edit($id)
+    public function edit($id, CountryRepository $countryRepo)
     {
+        $countries = $countryRepo->getAllSorted();
         $referee = Referee::find($id);
-        $countries = Country::all();
         return view('referee.edit', ["referee"=>$referee])
-             ->nest('countrySelectField', 'country.selectField', ["countries"=>$countries, "selectedCountry"=>$referee->country_id]);
+             ->nest('countrySelectField', 'country.selectField', ["countries"=>$countries, "countrySelected"=>$referee->country_id]);
     }
 
     public function update(Request $request, $id)
