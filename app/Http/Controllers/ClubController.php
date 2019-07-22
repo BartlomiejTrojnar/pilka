@@ -14,22 +14,21 @@ class ClubController extends Controller
         $clubs = $clubRepo->getAllSortedAndPaginate();
         return view('club.index')
             -> nest('clubTable', 'club.table', ["clubs"=>$clubs, "subTitle"=>"", "links"=>true]);
-
     }
 
-    public function orderBy($column)
+    public function order($column)
     {
-        if(session()->get('ClubOrderBy[0]') == $column)
-          if(session()->get('ClubOrderBy[1]') == 'desc')
-            session()->put('ClubOrderBy[1]', 'asc');
+        if(session()->get('ClubOrder[0]') == $column)
+          if(session()->get('ClubOrder[1]') == 'desc')
+            session()->put('ClubOrder[1]', 'asc');
           else
-            session()->put('ClubOrderBy[1]', 'desc');
+            session()->put('ClubOrder[1]', 'desc');
         else
         {
-          session()->put('ClubOrderBy[2]', session()->get('ClubOrderBy[0]'));
-          session()->put('ClubOrderBy[0]', $column);
-          session()->put('ClubOrderBy[3]', session()->get('ClubOrderBy[1]'));
-          session()->put('ClubOrderBy[1]', 'asc');
+          session()->put('ClubOrder[2]', session()->get('ClubOrder[0]'));
+          session()->put('ClubOrder[0]', $column);
+          session()->put('ClubOrder[3]', session()->get('ClubOrder[1]'));
+          session()->put('ClubOrder[1]', 'asc');
         }
 
         return redirect( $_SERVER['HTTP_REFERER'] );
@@ -64,12 +63,13 @@ class ClubController extends Controller
     {
         if(empty(session()->get('clubView')))  session()->put('clubView', 'showInfo');
         if($view)  session()->put('clubView', $view);
+        session()->put('clubSelected', $id);
         $club = $clubRepo -> find($id);
         $previous = $clubRepo -> PreviousRecordId($id);
         $next = $clubRepo -> NextRecordId($id);
 
         switch(session()->get('clubView')) {
-          case 'tshowInfo':
+          case 'showInfo':
               return view('club.show', ["club"=>$club, "previous"=>$previous, "next"=>$next])
                   -> nest('subView', 'club.showInfo', ["club"=>$club]);
           break;
@@ -85,7 +85,7 @@ class ClubController extends Controller
         $club = Club::find($id);
         $countries = Country::all();
         return view('club.edit', ["club"=>$club])
-             ->nest('countrySelectField', 'country.selectField', ["countries"=>$countries, "selectedCountry"=>$club->country_id]);
+             ->nest('countrySelectField', 'country.selectField', ["countries"=>$countries, "countrySelected"=>$club->country_id]);
     }
 
     public function update(Request $request, $id)
@@ -95,7 +95,6 @@ class ClubController extends Controller
         $this->validate($request, [
           'name' => 'required',
           'city' => 'required',
-          'year_of_establishment' => 'required',
           'country_id' => 'required',
         ]);
 

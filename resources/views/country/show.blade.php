@@ -1,17 +1,17 @@
 @extends('layouts.app')
 
 @section('header')
-  <h1>{{ $country->name }}</h1>
-  <aside id="strzalka_l">
+  <aside id="arrow_left">
     <a href="{{ route('panstwo.show', $previous) }}">
-      <img src="{{ asset('css/strzalka_l1.png') }}" alt="poprzednia">
+      <i class='fa fa-chevron-left'></i>
     </a>
   </aside>
-  <aside id="strzalka_p">
+  <aside id="arrow_right">
     <a href="{{ route('panstwo.show', $next) }}">
-      <img src="{{ asset('css/strzalka_p1.png') }}" alt="nastepna">
+      <i class='fa fa-chevron-right'></i>
     </a>
   </aside>
+  <h1>{{ $country->name }}</h1>
 @endsection
 
 @section('main-content')

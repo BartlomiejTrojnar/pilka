@@ -25,11 +25,10 @@
         <th><label for="country_id">państwo</label></th>
         <td><?php   print_r($countrySelectField);  ?></td>
       </tr>
-
       <tr class="submit"><td colspan="2">
           <input type="hidden" name="history_view" value="{{ $_SERVER['HTTP_REFERER'] }}" />
-          <button class="btn btn-primary" type="submit">zapisz zmiany</button>
-          <a class="btn btn-primary" href="{{ route('klub.index') }}">anuluj</a>
+          <button class="btn btn-success" type="submit">zapisz zmiany</button>
+          <a class="btn btn-success" href="{{ $_SERVER['HTTP_REFERER'] }}">anuluj</a>
       </tr>
     </table>
   </form>

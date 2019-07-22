@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css?family=Kelly+Slab');
+
+nav#main-menu {
+    position: absolute;
+    top: 60px;
+    left: 5px;
+    width: 175px;
+}
+nav#main-menu li {
+    background: #222;
+    margin-top: 3px;
+    border-radius: 10px;
+}
+nav#main-menu a {
+    border-radius: 10px;
+    color: #fa8;
+    font-family: 'Kelly Slab', cursive;
+}
+nav#main-menu a:hover {
+    background: #555;
+}

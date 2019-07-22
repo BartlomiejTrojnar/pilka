@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('header')
   <h1>Zamiana danych sędziego</h1>
 @endsection
@@ -33,13 +32,10 @@
         <th><label for="active">aktywny?</label></th>
         <td><input type="checkbox" name="active" value="{{$referee->active}}" /></td>
       </tr>
-
-      <tr class="submit">
-        <td colspan="2">
+      <tr class="submit"><td colspan="2">
           <input type="hidden" name="history_view" value="{{ $_SERVER['HTTP_REFERER'] }}" />
-          <button class="btn btn-primary" type="submit">zapisz zmiany</button>
-          <a class="btn btn-primary" href="{{ route('sedzia.index') }}">anuluj</a>
-        </td>
+          <button class="btn btn-success" type="submit">zapisz zmiany</button>
+          <a class="btn btn-success" href="{{ route('sedzia.index') }}">anuluj</a>
       </tr>
     </table>
   </form>

@@ -1,20 +1,16 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use App\Stadium;
+use App\Repositories\StadiumRepository;
 use Illuminate\Http\Request;
 
 class StadiumController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function index(StadiumRepository $stadiumRepo)
     {
-        //
+        $stadiums = $stadiumRepo -> getAllSortedAndPaginate();
+        return view('stadium.index')
+            -> nest('stadiumTable', 'stadium.table', ["stadiums"=>$stadiums, "links"=>true, "subTitle"=>""]);
     }
 
     /**

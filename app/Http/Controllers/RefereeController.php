@@ -24,19 +24,19 @@ class RefereeController extends Controller
             -> nest('refereeTable', 'referee.table', ["referees"=>$referees, "links"=>true, "subTitle"=>"", "countrySelectField"=>$countrySelectField]);
     }
 
-    public function orderBy($column)
+    public function order($column)
     {
-        if(session()->get('RefereeOrderBy[0]') == $column)
-          if(session()->get('RefereeOrderBy[1]') == 'desc')
-            session()->put('RefereeOrderBy[1]', 'asc');
+        if(session()->get('RefereeOrder[0]') == $column)
+          if(session()->get('RefereeOrder[1]') == 'desc')
+            session()->put('RefereeOrder[1]', 'asc');
           else
-            session()->put('RefereeOrderBy[1]', 'desc');
+            session()->put('RefereeOrder[1]', 'desc');
         else
         {
-          session()->put('RefereeOrderBy[2]', session()->get('RefereeOrderBy[0]'));
-          session()->put('RefereeOrderBy[0]', $column);
-          session()->put('RefereeOrderBy[3]', session()->get('RefereeOrderBy[1]'));
-          session()->put('RefereeOrderBy[1]', 'asc');
+          session()->put('RefereeOrder[2]', session()->get('RefereeOrder[0]'));
+          session()->put('RefereeOrder[0]', $column);
+          session()->put('RefereeOrder[3]', session()->get('RefereeOrder[1]'));
+          session()->put('RefereeOrder[1]', 'asc');
         }
 
         return redirect( $_SERVER['HTTP_REFERER'] );

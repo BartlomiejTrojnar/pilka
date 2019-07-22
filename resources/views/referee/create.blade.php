@@ -34,12 +34,11 @@
         <th><label for="active">aktywny?</label></th>
         <td><input type="checkbox" name="active" /></td>
       </tr>
-      <tr class="submit">
-        <td colspan="2">
-          <button class="btn btn-primary" type="submit">dodaj</button>
-          <a class="btn btn-primary" href="{{ route('sedzia.index') }}">anuluj</a>
-        </td>
-      </tr>
+      <tr class="submit"><td colspan="2">
+          <input type="hidden" name="history_view" value="{{ $_SERVER['HTTP_REFERER'] }}" />
+          <button class="btn btn-success" type="submit">dodaj</button>
+          <a class="btn btn-success" href="{{ $_SERVER['HTTP_REFERER'] }}">anuluj</a>
+      </td></tr>
     </table>
   </form>
 @endsection

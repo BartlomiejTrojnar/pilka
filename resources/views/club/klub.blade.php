@@ -1,12 +1,19 @@
-<?php
-/* ------------------------- skrypt obsługujący widok dla klubu ------------------------- */
-/* -------------------- (C) mgr inż. Bartłomiej Trojnar; (III) marzec 2018 -------------------- */
-?>
+@extends('layouts.app')
 
-@extends('master')
 @section('header')
-  <h1>{{{$klub->nazwa}}} {{{$klub->miasto}}}</h1>
-@stop
+  <aside id="arrow_left">
+    <a href="{{ route('klub.show', $previous) }}">
+      <i class='fa fa-chevron-left'></i>
+    </a>
+  </aside>
+  <aside id="arrow_right">
+    <a href="{{ route('klub.show', $next) }}">
+      <i class='fa fa-chevron-right'></i>
+    </a>
+  </aside>
+  <h1>{{ $club->name }}</h1>
+@endsection
+
 
 @section('system')
   {{{$klub->nazwa}}} <strong> {{{$klub->miasto}}} </strong>

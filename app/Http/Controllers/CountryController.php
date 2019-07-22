@@ -10,22 +10,22 @@ class CountryController extends Controller
     {
         $countries = $countryRepo->getAllSortedAndPaginate();
         return view('country.index')
-            -> nest('countryTable', 'country.table', ["countries"=>$countries, "subTitle"=>""]);
+            -> nest('countryTable', 'country.table', ["countries"=>$countries, "subTitle"=>"", "links"=>true]);
     }
 
-    public function orderBy($column)
+    public function order($column)
     {
-        if(session()->get('CountryOrderBy[0]') == $column)
-          if(session()->get('CountryOrderBy[1]') == 'desc')
-            session()->put('CountryOrderBy[1]', 'asc');
+        if(session()->get('CountryOrder[0]') == $column)
+          if(session()->get('CountryOrder[1]') == 'desc')
+            session()->put('CountryOrder[1]', 'asc');
           else
-            session()->put('CountryOrderBy[1]', 'desc');
+            session()->put('CountryOrder[1]', 'desc');
         else
         {
-          session()->put('CountryOrderBy[2]', session()->get('CountryOrderBy[0]'));
-          session()->put('CountryOrderBy[0]', $column);
-          session()->put('CountryOrderBy[3]', session()->get('CountryOrderBy[1]'));
-          session()->put('CountryOrderBy[1]', 'asc');
+          session()->put('CountryOrder[2]', session()->get('CountryOrder[0]'));
+          session()->put('CountryOrder[0]', $column);
+          session()->put('CountryOrder[3]', session()->get('CountryOrder[1]'));
+          session()->put('CountryOrder[1]', 'asc');
         }
 
         return redirect( $_SERVER['HTTP_REFERER'] );
@@ -33,7 +33,11 @@ class CountryController extends Controller
 
     public function create()
     {
-        return view('country.create');
+        $continents = array('Europa', 'Afryka', 'Ameryka Południowa', 'Ameryka Północna', 'Azja', 'Oceania');
+        $continentSelected = 'Europa';
+
+        return view('country.create')
+            -> nest('continentSelectField', 'layouts.continentSelectField', ["continents"=>$continents, "continentSelected"=>$continentSelected]);
     }
 
     public function store(Request $request)
@@ -58,6 +62,7 @@ class CountryController extends Controller
     {
         if( empty(session()->get('countryView')) )  session()->put('countryView', 'showInfo');
         if($view)  session()->put('countryView', $view);
+        session()->put('countrySelected', $id);
         $country = $countryRepo -> find($id);
         $previous = $countryRepo->PreviousRecordId($id);
         $next = $countryRepo->NextRecordId($id);
@@ -66,22 +71,25 @@ class CountryController extends Controller
           case 'showInfo':
               return view('country.show', ["country"=>$country, "previous"=>$previous, "next"=>$next])
                   -> nest('subView', 'country.showInfo', ["country"=>$country]);
-              exit;
           break;
-          case 'change':
-              session()->put('countrySelected', $id);
-              return redirect( $_SERVER['HTTP_REFERER'] );
+          case 'showClubs':
+              $subTitle = "Kluby w państwie";
+              return view('country.show', ["country"=>$country, "previous"=>$previous, "next"=>$next])
+                  -> nest('subView', 'club.table', ["clubs"=>$country->clubs, "subTitle"=>$subTitle]);
           break;
           default:
               printf('<p style="background: #bb0; color: #f00; font-size: x-large; text-align: center; border: 3px solid red; padding: 5px;">Widok %s nieznany</p>', session()->get('countryView'));
-              exit;
           break;
         }
     }
 
     public function edit(Country $panstwo)
     {
-        return view('country.edit', ["country"=>$panstwo]);
+        $continents = array('Europa', 'Afryka', 'Ameryka Południowa', 'Ameryka Północna', 'Azja', 'Oceania');
+        $continentSelected = $panstwo->continent;
+
+        return view('country.edit', ["country"=>$panstwo])
+            -> nest('continentSelectField', 'layouts.continentSelectField', ["continents"=>$continents, "continentSelected"=>$continentSelected]);
     }
 
     public function update(Request $request, Country $panstwo)
