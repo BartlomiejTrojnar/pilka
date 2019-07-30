@@ -8,7 +8,7 @@ class CountryController extends Controller
 {
     public function index(CountryRepository $countryRepo)
     {
-        $countries = $countryRepo->getAllSortedAndPaginate();
+        $countries = $countryRepo -> getAllSortedAndPaginate();
         return view('country.index')
             -> nest('countryTable', 'country.table', ["countries"=>$countries, "subTitle"=>"", "links"=>true]);
     }
@@ -42,7 +42,7 @@ class CountryController extends Controller
 
     public function store(Request $request)
     {
-        $this->validate($request, [
+        $this -> validate($request, [
           'symbol' => 'required',
           'name' => 'required',
           'continent' => 'required',
@@ -53,21 +53,21 @@ class CountryController extends Controller
         $country->symbol = $request->symbol;
         $country->name = $request->name;
         $country->continent = $request->continent;
-        $country->save();
+        $country -> save();
 
         return redirect( $request->history_view );
     }
 
     public function show($id, $view='', CountryRepository $countryRepo)
     {
-        if( empty(session()->get('countryView')) )  session()->put('countryView', 'showInfo');
-        if($view)  session()->put('countryView', $view);
-        session()->put('countrySelected', $id);
+        if( empty(session() -> get('countryView')) )  session() -> put('countryView', 'showInfo');
+        if($view)  session() -> put('countryView', $view);
+        session() -> put('countrySelected', $id);
         $country = $countryRepo -> find($id);
-        $previous = $countryRepo->PreviousRecordId($id);
-        $next = $countryRepo->NextRecordId($id);
+        $previous = $countryRepo -> PreviousRecordId($id);
+        $next = $countryRepo -> NextRecordId($id);
 
-        switch( session()->get('countryView') ) {
+        switch( session() -> get('countryView') ) {
           case 'showInfo':
               return view('country.show', ["country"=>$country, "previous"=>$previous, "next"=>$next])
                   -> nest('subView', 'country.showInfo', ["country"=>$country]);
@@ -76,6 +76,11 @@ class CountryController extends Controller
               $subTitle = "Kluby w państwie";
               return view('country.show', ["country"=>$country, "previous"=>$previous, "next"=>$next])
                   -> nest('subView', 'club.table', ["clubs"=>$country->clubs, "subTitle"=>$subTitle]);
+          break;
+          case 'showReferees':
+              $subTitle = "Sędziowie";
+              return view('country.show', ["country"=>$country, "previous"=>$previous, "next"=>$next])
+                  -> nest('subView', 'referee.table', ["referees"=>$country->referees, "subTitle"=>$subTitle]);
           break;
           default:
               printf('<p style="background: #bb0; color: #f00; font-size: x-large; text-align: center; border: 3px solid red; padding: 5px;">Widok %s nieznany</p>', session()->get('countryView'));
@@ -94,7 +99,7 @@ class CountryController extends Controller
 
     public function update(Request $request, Country $panstwo)
     {
-        $this->validate($request, [
+        $this -> validate($request, [
           'symbol' => 'required',
           'name' => 'required',
           'continent' => 'required',
@@ -104,14 +109,14 @@ class CountryController extends Controller
         $country->symbol = $request->symbol;
         $country->name = $request->name;
         $country->continent = $request->continent;
-        $country->save();
+        $country -> save();
 
         return redirect( $request->history_view );
     }
 
     public function destroy(Country $panstwo)
     {
-        $panstwo->delete();
+        $panstwo -> delete();
         return redirect( $_SERVER['HTTP_REFERER'] );
     }
 }

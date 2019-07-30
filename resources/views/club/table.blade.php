@@ -70,7 +70,7 @@
           <form action="{{ route('klub.destroy', $club->id) }}" method="post" id="delete-form-{{$club->id}}">
             {{ csrf_field() }}
             {{ method_field('DELETE') }}
-            <button class="btn btn-primary"><i class="fa fa-remove"></i></button>
+            <button class="btn btn-primary"><i class="fa fa-trash"></i></button>
           </form>
         </td>
       </tr>

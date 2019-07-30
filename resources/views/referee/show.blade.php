@@ -16,7 +16,12 @@
 
 
 @section('main-content')
-  <p>{{ $country->id }}</p>
-  <p>{{ $country->symbol }}</p>
-  <p>{{ $country->continent }}</p>
+  <ul class="nav nav-tabs nav-justified">
+    <li class="nav-item"><a class="nav-link" href="{{ url('sedzia/'.$referee->id.'/showInfo') }}">informacje</a></li>
+    <li class="nav-item"><a class="nav-link" href="{{ route('sedzia.index') }}">powrót</a></li>
+  </ul>
+
+  <?php
+    echo $subView;
+  ?>
 @endsection

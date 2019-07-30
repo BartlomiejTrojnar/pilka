@@ -1,6 +1,6 @@
 <?php
 namespace App\Http\Controllers;
-use App\Stadium;
+use App\Models\Stadium;
 use App\Repositories\StadiumRepository;
 use Illuminate\Http\Request;
 
@@ -13,69 +13,91 @@ class StadiumController extends Controller
             -> nest('stadiumTable', 'stadium.table', ["stadiums"=>$stadiums, "links"=>true, "subTitle"=>""]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    public function order($column)
+    {
+        if(session()->get('StadiumOrder[0]') == $column)
+          if(session()->get('StadiumOrder[1]') == 'desc')
+            session()->put('StadiumOrder[1]', 'asc');
+          else
+            session()->put('StadiumOrder[1]', 'desc');
+        else
+        {
+          session()->put('StadiumOrder[2]', session()->get('StadiumOrder[0]'));
+          session()->put('StadiumOrder[0]', $column);
+          session()->put('StadiumOrder[3]', session()->get('StadiumOrder[1]'));
+          session()->put('StadiumOrder[1]', 'asc');
+        }
+
+        return redirect( $_SERVER['HTTP_REFERER'] );
+    }
+
     public function create()
     {
-        //
+        return view('stadium.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        $this -> validate($request, [
+          'city' => 'required',
+          'name' => 'required',
+        ]);
+
+        $stadium = new Stadium;
+        $stadium->city = $request->city;
+        $stadium->name = $request->name;
+        $stadium->capacity = $request->capacity;
+        $stadium -> save();
+
+        return redirect( $request->history_view );
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Stadium  $stadium
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Stadium $stadium)
+    public function show($id, $view='', StadiumRepository $stadiumRepo)
     {
-        //
+        if( empty(session() -> get('stadiumView')) )  session() -> put('stadiumView', 'showInfo');
+        if($view)  session() -> put('stadiumView', $view);
+        session() -> put('stadiumSelected', $id);
+        $stadium = $stadiumRepo -> find($id);
+        $previous = $stadiumRepo -> PreviousRecordId($id);
+        $next = $stadiumRepo -> NextRecordId($id);
+
+        switch( session() -> get('stadiumView') ) {
+          case 'showInfo':
+              return view('stadium.show', ["stadium"=>$stadium, "previous"=>$previous, "next"=>$next])
+                  -> nest('subView', 'stadium.showInfo', ["stadium"=>$stadium]);
+          break;
+          default:
+              printf('<p style="background: #bb0; color: #f00; font-size: x-large; text-align: center; border: 3px solid red; padding: 5px;">Widok %s nieznany</p>', session() -> get('stadiumView'));
+          break;
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Stadium  $stadium
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Stadium $stadium)
+    public function edit($id)
     {
-        //
+        $stadium = Stadium::find($id);
+        return view('stadium.edit', ["stadium"=>$stadium]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Stadium  $stadium
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Stadium $stadium)
+    public function update(Request $request, $id, Stadium $stadium)
     {
-        //
+        $this -> validate($request, [
+          'city' => 'required',
+          'name' => 'required',
+        ]);
+
+        $stadium = Stadium::find($id);
+        $stadium->city = $request->city;
+        $stadium->name = $request->name;
+        $stadium->capacity = $request->capacity;
+        $stadium -> save();
+
+        return redirect( $request->history_view );
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Stadium  $stadium
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Stadium $stadium)
+    public function destroy($id, Stadium $stadium)
     {
-        //
+        $stadium = Stadium::find($id);
+        $stadium -> delete();
+        return redirect( $_SERVER['HTTP_REFERER'] );
     }
 }

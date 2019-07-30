@@ -14,24 +14,13 @@
   <h1>{{ $stadium->name }}</h1>
 @endsection
 
+@section('main-content')
+  <ul class="nav nav-tabs nav-justified">
+    <li class="nav-item"><a class="nav-link" href="{{ url('stadion/'.$stadium->id.'/showInfo') }}">informacje</a></li>
+    <li class="nav-item"><a class="nav-link" href="{{ route('stadion.index') }}">powrót</a></li>
+  </ul>
 
-
-@section('system')
-  {{{$stadion->miasto}}} <strong> {{{$stadion->nazwa}}} </strong>
-  <p><a href="{{url('stadiony/'.$stadion->id.'/edit')}}">
-      <span class="glyphicon glyphicon-edit"></span> Edycja </a>
-  </p>
-  <p><a href="{{url('stadiony/'.$stadion->id.'/delete')}}">
-      <span class="glyphicon glyphicon-trash"></span> Usunięcie </a>
-  </p>
-  <p>Ostatnia edycja: {{$stadion->updated_at}}</p>
-  <p>
-    @if($stadion->panstwo_id)
-      Państwo: {{link_to('panstwa/' . $stadion->panstwo_id, $stadion->panstwo->nazwa)}}
-    @endif
-  </p>
-@stop
-
-@section('foot')
-  aktualizacja: 21 marca 2018 r.
-@stop
+  <?php
+    echo $subView;
+  ?>
+@endsection

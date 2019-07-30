@@ -58,7 +58,7 @@
           <form action="{{ route('panstwo.destroy', $country->id) }}" method="post" id="delete-form-{{$country->id}}">
             {{ csrf_field() }}
             {{ method_field('DELETE') }}
-            <button class="btn btn-primary"><i class="fa fa-remove"></i></button>
+            <button class="btn btn-primary"><i class="fa fa-trash"></i></button>
           </form>
         </td>
       </tr>

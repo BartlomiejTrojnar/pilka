@@ -11,8 +11,8 @@ class RefereeController extends Controller
 {
     public function index(RefereeRepository $refereeRepo, CountryRepository $countryRepo)
     {
-        $countries = $countryRepo->getAllSorted();
-        $countrySelected = session()->get('countrySelected');
+        $countries = $countryRepo -> getAllSorted();
+        $countrySelected = session() -> get('countrySelected');
         $countrySelectField = view('country.selectField', ["countries"=>$countries, "countrySelected"=>$countrySelected]);
 
         $referees = $refereeRepo -> getAllSortedAndPaginate();
@@ -50,7 +50,7 @@ class RefereeController extends Controller
 
     public function store(Request $request)
     {
-        $this->validate($request, [
+        $this -> validate($request, [
           'first_name' => 'required',
           'last_name' => 'required',
           'country_id' => 'required',
@@ -64,35 +64,44 @@ class RefereeController extends Controller
         $referee->date_of_birth = $request->date_of_birth;
         if($request->active == "on") $referee->active = true;
         else $referee->active = false;
-        $referee->save();
+        $referee -> save();
 
         return redirect(route('sedzia.index'));
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Referee  $referee
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Referee $referee)
+    public function show($id, $view='', RefereeRepository $refereeRepo)
     {
-        //
+        if( empty(session() -> get('refereeView')) )  session() -> put('refereeView', 'showInfo');
+        if($view)  session() -> put('refereeView', $view);
+        session() -> put('refereeSelected', $id);
+        $referee = $refereeRepo -> find($id);
+        $previous = $refereeRepo -> PreviousRecordId($id);
+        $next = $refereeRepo -> NextRecordId($id);
+
+        switch( session() -> get('refereeView') ) {
+          case 'showInfo':
+              return view('referee.show', ["referee"=>$referee, "previous"=>$previous, "next"=>$next])
+                  -> nest('subView', 'referee.showInfo', ["referee"=>$referee]);
+          break;
+          default:
+              printf('<p style="background: #bb0; color: #f00; font-size: x-large; text-align: center; border: 3px solid red; padding: 5px;">Widok %s nieznany</p>', session()->get('countryView'));
+          break;
+        }
     }
 
     public function edit($id, CountryRepository $countryRepo)
     {
-        $countries = $countryRepo->getAllSorted();
+        $countries = $countryRepo -> getAllSorted();
         $referee = Referee::find($id);
         return view('referee.edit', ["referee"=>$referee])
              ->nest('countrySelectField', 'country.selectField', ["countries"=>$countries, "countrySelected"=>$referee->country_id]);
     }
 
-    public function update(Request $request, $id)
+    public function update($id, Request $request)
     {
         $referee = Referee::find($id);
 
-        $this->validate($request, [
+        $this -> validate($request, [
           'first_name' => 'required',
           'last_name' => 'required',
           'country_id' => 'required',
@@ -105,7 +114,7 @@ class RefereeController extends Controller
         $referee->date_of_birth = $request->date_of_birth;
         if($request->active == "on") $referee->active = true;
           else $referee->active = false;
-        $referee->save();
+        $referee -> save();
 
         return redirect(route('sedzia.index'));
     }
@@ -113,7 +122,7 @@ class RefereeController extends Controller
     public function destroy($id)
     {
         $referee = Referee::find($id);
-        $referee->delete();
+        $referee -> delete();
         return redirect( $_SERVER['HTTP_REFERER'] );
     }
 }

@@ -38,7 +38,7 @@
       <th colspan="2">+/-</th>
     </tr>
 
-    @if($countrySelectField)
+    @if(isset($countrySelectField))
     <tr>
       <td colspan="3"></td>
       <td><?php  print_r($countrySelectField);  ?></td>
@@ -66,7 +66,7 @@
           <form action="{{ route('sedzia.destroy', $referee->id) }}" method="post" id="delete-form-{{$referee->id}}">
             {{ csrf_field() }}
             {{ method_field('DELETE') }}
-            <button class="btn btn-primary"><i class="fa fa-remove"></i></button>
+            <button class="btn btn-primary"><i class="fa fa-trash"></i></button>
           </form>
         </td>
       </tr>
