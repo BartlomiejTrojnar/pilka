@@ -21,7 +21,7 @@
 
   <tr>
     <th>sędziowie</th>
-    <td>liczba?</td>
+    <td>{{ count($country->referees) }}</td>
   </tr>
 
   <tr>

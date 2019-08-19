@@ -66,7 +66,7 @@ class RefereeController extends Controller
         else $referee->active = false;
         $referee -> save();
 
-        return redirect(route('sedzia.index'));
+        return redirect( $request->history_view );
     }
 
     public function show($id, $view='', RefereeRepository $refereeRepo)
@@ -116,7 +116,7 @@ class RefereeController extends Controller
           else $referee->active = false;
         $referee -> save();
 
-        return redirect(route('sedzia.index'));
+        return redirect( $request->history_view );
     }
 
     public function destroy($id)

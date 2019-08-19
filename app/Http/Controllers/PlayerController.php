@@ -1,41 +1,70 @@
 <?php
-
 namespace App\Http\Controllers;
+use App\Models\Player;
+use App\Repositories\PlayerRepository;
 
-use App\Player;
+use App\Models\Country;
+use App\Repositories\CountryRepository;
 use Illuminate\Http\Request;
 
 class PlayerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function index(PlayerRepository $playerRepo, CountryRepository $countryRepo)
     {
-        //
+        $countries = $countryRepo -> getAllSorted();
+        $countrySelected = session()->get('countrySelected');
+        $countrySelectField = view('country.selectField', ["countries"=>$countries, "countrySelected"=>$countrySelected]);
+
+        $players = $playerRepo -> getAllSortedAndPaginate();
+        if( $countrySelected ) {
+            $players = Player::where('country_id', $countrySelected);
+            $players = $playerRepo -> sortAndPaginateRecords($players);
+        }
+        return view('player.index')
+            -> nest('playerTable', 'player.table', ["players"=>$players, "links"=>true, "subTitle"=>"", "countrySelectField"=>$countrySelectField]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    public function order($column)
+    {
+        if(session()->get('PlayerOrder[0]') == $column)
+          if(session()->get('PlayerOrder[1]') == 'desc')
+            session()->put('PlayerOrder[1]', 'asc');
+          else
+            session()->put('PlayerOrder[1]', 'desc');
+        else
+        {
+          session()->put('PlayerOrder[2]', session()->get('PlayerOrder[0]'));
+          session()->put('PlayerOrder[0]', $column);
+          session()->put('PlayerOrder[3]', session()->get('PlayerOrder[1]'));
+          session()->put('PlayerOrder[1]', 'asc');
+        }
+
+        return redirect( $_SERVER['HTTP_REFERER'] );
+    }
+
     public function create()
     {
-        //
+        $countries = Country::all('name', 'id');
+        return view('player.create', ["countries"=>$countries]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        $this -> validate($request, [
+          'first_name' => 'required',
+          'last_name' => 'required',
+          'country_id' => 'required',
+        ]);
+
+        $player = new Player;
+        $player->first_name = $request->first_name;
+        $player->last_name = $request->last_name;
+        $player->country_id = $request->country_id;
+        $player->date_of_birth = $request->date_of_birth;
+        $player->city_of_birth = $request->city_of_birth;
+        $player -> save();
+
+        return redirect( $request->history_view );
     }
 
     /**
@@ -49,37 +78,37 @@ class PlayerController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Player  $player
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Player $player)
+    public function edit($id, CountryRepository $countryRepo)
     {
-        //
+        $countries = $countryRepo -> getAllSorted();
+        $player = Player::find($id);
+        return view('player.edit', ["player"=>$player])
+             ->nest('countrySelectField', 'country.selectField', ["countries"=>$countries, "countrySelected"=>$player->country_id]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Player  $player
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Player $player)
+    public function update($id, Request $request)
     {
-        //
+        $this -> validate($request, [
+          'first_name' => 'required',
+          'last_name' => 'required',
+          'country_id' => 'required',
+        ]);
+
+        $player = Player::find($id);
+        $player->first_name = $request->first_name;
+        $player->last_name = $request->last_name;
+        $player->date_of_birth = $request->date_of_birth;
+        $player->city_of_birth = $request->city_of_birth;
+        $player->country_id = $request->country_id;
+        $player -> save();
+
+        return redirect( $request->history_view );
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Player  $player
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Player $player)
+    public function destroy($id)
     {
-        //
+        $player = Player::find($id);
+        $player -> delete();
+        return redirect( $_SERVER['HTTP_REFERER'] );
     }
 }

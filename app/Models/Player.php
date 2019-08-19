@@ -11,4 +11,6 @@ class Player extends Model
     if( empty(session() -> get('PlayerOrder[2]')) )    session() -> put('PlayerOrder[2]', 'id');
     if( empty(session() -> get('PlayerOrder[3]')) )    session() -> put('PlayerOrder[3]', 'asc');
   }
+
+  public function country()  { return $this->belongsTo(Country::class); }
 }
