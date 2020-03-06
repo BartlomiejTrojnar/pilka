@@ -9,8 +9,7 @@ use Illuminate\Http\Request;
 
 class PlayerController extends Controller
 {
-    public function index(PlayerRepository $playerRepo, CountryRepository $countryRepo)
-    {
+    public function index(PlayerRepository $playerRepo, CountryRepository $countryRepo) {
         $countries = $countryRepo -> getAllSorted();
         $countrySelected = session()->get('countrySelected');
         $countrySelectField = view('country.selectField', ["countries"=>$countries, "countrySelected"=>$countrySelected]);
@@ -24,32 +23,26 @@ class PlayerController extends Controller
             -> nest('playerTable', 'player.table', ["players"=>$players, "links"=>true, "subTitle"=>"", "countrySelectField"=>$countrySelectField]);
     }
 
-    public function order($column)
-    {
+    public function order($column) {
         if(session()->get('PlayerOrder[0]') == $column)
-          if(session()->get('PlayerOrder[1]') == 'desc')
+            if(session()->get('PlayerOrder[1]') == 'desc')  session()->put('PlayerOrder[1]', 'asc');
+            else  session()->put('PlayerOrder[1]', 'desc');
+        else {
+            session()->put('PlayerOrder[2]', session()->get('PlayerOrder[0]'));
+            session()->put('PlayerOrder[0]', $column);
+            session()->put('PlayerOrder[3]', session()->get('PlayerOrder[1]'));
             session()->put('PlayerOrder[1]', 'asc');
-          else
-            session()->put('PlayerOrder[1]', 'desc');
-        else
-        {
-          session()->put('PlayerOrder[2]', session()->get('PlayerOrder[0]'));
-          session()->put('PlayerOrder[0]', $column);
-          session()->put('PlayerOrder[3]', session()->get('PlayerOrder[1]'));
-          session()->put('PlayerOrder[1]', 'asc');
         }
 
         return redirect( $_SERVER['HTTP_REFERER'] );
     }
 
-    public function create()
-    {
+    public function create() {
         $countries = Country::all('name', 'id');
         return view('player.create', ["countries"=>$countries]);
     }
 
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         $this -> validate($request, [
           'first_name' => 'required',
           'last_name' => 'required',
@@ -62,6 +55,9 @@ class PlayerController extends Controller
         $player->country_id = $request->country_id;
         $player->date_of_birth = $request->date_of_birth;
         $player->city_of_birth = $request->city_of_birth;
+        $player->matches = $request->matches;
+        $player->minutes = $request->minutes;
+        $player->goals = $request->goals;
         $player -> save();
 
         return redirect( $request->history_view );
@@ -86,8 +82,7 @@ class PlayerController extends Controller
              ->nest('countrySelectField', 'country.selectField', ["countries"=>$countries, "countrySelected"=>$player->country_id]);
     }
 
-    public function update($id, Request $request)
-    {
+    public function update($id, Request $request) {
         $this -> validate($request, [
           'first_name' => 'required',
           'last_name' => 'required',
@@ -100,6 +95,9 @@ class PlayerController extends Controller
         $player->date_of_birth = $request->date_of_birth;
         $player->city_of_birth = $request->city_of_birth;
         $player->country_id = $request->country_id;
+        $player->matches = $request->matches;
+        $player->minutes = $request->minutes;
+        $player->goals = $request->goals;
         $player -> save();
 
         return redirect( $request->history_view );

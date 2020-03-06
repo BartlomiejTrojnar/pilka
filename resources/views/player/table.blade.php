@@ -66,6 +66,42 @@
         @endif
       </a></th>
 
+      <th><a class="order" href="{{ route('zawodnik.order', 'matches') }}">mecze
+        @if( session()->get('PlayerOrder[0]') == 'matches' )
+          @if( session()->get('PlayerOrder[1]') == 'asc' )
+            <i class="fa fa-sort-alpha-asc"></i>
+          @else
+            <i class="fa fa-sort-alpha-desc"></i>
+          @endif
+        @else
+            <i class="fa fa-sort"></i>
+        @endif
+      </a></th>
+
+      <th><a class="order" href="{{ route('zawodnik.order', 'minutes') }}">minuty
+        @if( session()->get('PlayerOrder[0]') == 'minutes' )
+          @if( session()->get('PlayerOrder[1]') == 'asc' )
+            <i class="fa fa-sort-alpha-asc"></i>
+          @else
+            <i class="fa fa-sort-alpha-desc"></i>
+          @endif
+        @else
+            <i class="fa fa-sort"></i>
+        @endif
+      </a></th>
+
+      <th><a class="order" href="{{ route('zawodnik.order', 'goals') }}">gole
+        @if( session()->get('PlayerOrder[0]') == 'goals' )
+          @if( session()->get('PlayerOrder[1]') == 'asc' )
+            <i class="fa fa-sort-alpha-asc"></i>
+          @else
+            <i class="fa fa-sort-alpha-desc"></i>
+          @endif
+        @else
+            <i class="fa fa-sort"></i>
+        @endif
+      </a></th>
+
       <th>data wpisania</th>
       <th>data aktualizacji</th>
       <th colspan="2">+/-</th>
@@ -75,7 +111,7 @@
     <tr>
       <td colspan="3"></td>
       <td><?php  print_r($countrySelectField);  ?></td>
-      <td colspan="6"></td>
+      <td colspan="9"></td>
     </tr>
     @endif
   </thead>
@@ -89,6 +125,9 @@
         <td><a href="{{ route('panstwo.show', $player->country_id) }}">{{ $player->country->name }}</a></td>
         <td>{{ $player->date_of_birth }}</td>
         <td>{{ $player->city_of_birth }}</td>
+        <td>{{ $player->matches }}</td>
+        <td>{{ $player->minutes }}</td>
+        <td>{{ $player->goals }}</td>
         <td>{{ $player->created_at }}</td>
         <td>{{ $player->updated_at }}</td>
         <td class="edit"><a class="btn btn-primary" href="{{ route('zawodnik.edit', $player->id) }}">
@@ -104,7 +143,7 @@
       </tr>
     @endforeach
 
-    <tr class="create"><td colspan="11">
+    <tr class="create"><td colspan="13">
         <a class="btn btn-primary" href="{{ route('zawodnik.create') }}"><i class="fa fa-plus"></i></a>
     </td></tr>
   </tbody>

@@ -16,5 +16,7 @@ class Country extends Model
 
   public function clubs()  { return $this->hasMany(Club::class); }
 
+  public function players()  { return $this->hasMany(Player::class); }
+
   public function referees()  { return $this->hasMany(Referee::class); }
 }

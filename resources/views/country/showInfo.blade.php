@@ -26,7 +26,7 @@
 
   <tr>
     <th>zawodnicy</th>
-    <td>liczba?</td>
+    <td>{{ count($country->players) }}</td>
   </tr>
 
   <tr>

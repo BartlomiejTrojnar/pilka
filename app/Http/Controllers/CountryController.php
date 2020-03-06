@@ -82,6 +82,11 @@ class CountryController extends Controller
               return view('country.show', ["country"=>$country, "previous"=>$previous, "next"=>$next])
                   -> nest('subView', 'referee.table', ["referees"=>$country->referees, "subTitle"=>$subTitle]);
           break;
+          case 'showPlayers':
+              $subTitle = "Zawodnicy";
+              return view('country.show', ["country"=>$country, "previous"=>$previous, "next"=>$next])
+                  -> nest('subView', 'player.table', ["players"=>$country->players, "subTitle"=>$subTitle]);
+          break;
           default:
               printf('<p style="background: #bb0; color: #f00; font-size: x-large; text-align: center; border: 3px solid red; padding: 5px;">Widok %s nieznany</p>', session()->get('countryView'));
           break;

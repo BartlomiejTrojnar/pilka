@@ -9,12 +9,12 @@
   {{ method_field('PATCH') }}
     <table>
       <tr>
-        <th><label for="first_name">imię</label></th>
-        <td><input type="text" name="first_name" size="15" maxlength="15" value="{{$player->first_name}}" /></td>
-      </tr>
-      <tr>
         <th><label for="last_name">nazwisko</label></th>
         <td><input type="text" name="last_name" size="15" maxlength="15" value="{{$player->last_name}}" /></td>
+      </tr>
+      <tr>
+        <th><label for="first_name">imię</label></th>
+        <td><input type="text" name="first_name" size="15" maxlength="18" value="{{$player->first_name}}" /></td>
       </tr>
       <tr>
         <th><label for="date_of_birth">data urodzenia</label></th>
@@ -27,6 +27,18 @@
       <tr>
         <th><label for="country_id">państwo</label></th>
         <td><?php   print_r($countrySelectField);  ?></td>
+      </tr>
+      <tr>
+        <th><label for="matches">mecze</label></th>
+        <td><input type="number" name="matches" size="3" maxlength="3" value="{{$player->matches}}" /></td>
+      </tr>
+      <tr>
+        <th><label for="minutes">minuty</label></th>
+        <td><input type="number" name="minutes" size="4" maxlength="5" value="{{$player->minutes}}" /></td>
+      </tr>
+      <tr>
+        <th><label for="goals">gole</label></th>
+        <td><input type="text" name="goals" size="3" maxlength="4" value="{{$player->goals}}" /></td>
       </tr>
       <tr class="submit"><td colspan="2">
           <input type="hidden" name="history_view" value="{{ $_SERVER['HTTP_REFERER'] }}" />
