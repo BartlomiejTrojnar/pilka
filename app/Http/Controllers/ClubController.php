@@ -1,4 +1,5 @@
 <?php
+// ------------------------- (C) Bartłomiej Trojnar (II) styczeń 2021 ------------------------- //
 namespace App\Http\Controllers;
 
 use App\Models\Club;
@@ -9,15 +10,13 @@ use Illuminate\Http\Request;
 
 class ClubController extends Controller
 {
-    public function index(ClubRepository $clubRepo)
-    {
+    public function index(ClubRepository $clubRepo)  {
         $clubs = $clubRepo -> getAllSortedAndPaginate();
         return view('club.index')
             -> nest('clubTable', 'club.table', ["clubs"=>$clubs, "subTitle"=>"", "links"=>true]);
     }
 
-    public function order($column)
-    {
+    public function order($column)  {
         if(session()->get('ClubOrder[0]') == $column)
           if(session()->get('ClubOrder[1]') == 'desc')
             session()->put('ClubOrder[1]', 'asc');
@@ -34,14 +33,12 @@ class ClubController extends Controller
         return redirect( $_SERVER['HTTP_REFERER'] );
     }
 
-    public function create()
-    {
+    public function create()  {
         $countries = Country::all('name', 'id');
         return view('club.create', ["countries"=>$countries]);
     }
 
-    public function store(Request $request)
-    {
+    public function store(Request $request)  {
         $this -> validate($request, [
           'name' => 'required',
           'city' => 'required',
@@ -59,8 +56,7 @@ class ClubController extends Controller
         return redirect( $request->history_view );
     }
 
-    public function show($id, $view='', ClubRepository $clubRepo)
-    {
+    public function show($id, $view='', ClubRepository $clubRepo)  {
         if( empty(session() -> get('clubView')) )  session() -> put('clubView', 'showInfo');
         if($view)  session() -> put('clubView', $view);
         session() -> put('clubSelected', $id);
@@ -80,16 +76,14 @@ class ClubController extends Controller
         }
     }
 
-    public function edit($id)
-    {
+    public function edit($id)  {
         $club = Club::find($id);
         $countries = Country::all();
         return view('club.edit', ["club"=>$club])
             -> nest('countrySelectField', 'country.selectField', ["countries"=>$countries, "countrySelected"=>$club->country_id]);
     }
 
-    public function update(Request $request, $id)
-    {
+    public function update(Request $request, $id)  {
         $club = Club::find($id);
 
         $this -> validate($request, [
@@ -107,8 +101,7 @@ class ClubController extends Controller
         return redirect( $request->history_view );
     }
 
-    public function destroy($id)
-    {
+    public function destroy($id)  {
         $club = Club::find($id);
         $club -> delete();
         return redirect( $_SERVER['HTTP_REFERER'] );

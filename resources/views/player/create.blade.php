@@ -28,7 +28,7 @@
       </tr>
       <tr>
         <th><label for="city_of_birth">miejsce urodzenia</label></th>
-        <td><input type="text" name="city_of_birth" size="10" maxlength="10" /></td>
+        <td><input type="text" name="city_of_birth" size="12" maxlength="15" /></td>
       </tr>
 
       <tr>

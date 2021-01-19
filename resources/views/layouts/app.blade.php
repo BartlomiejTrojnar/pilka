@@ -42,6 +42,7 @@ use App\Referee;
       <li><a href="{{ route('stadion.index') }}">stadiony</a></li>
       <li><a href="{{ route('zawodnik.index') }}">zawodnicy</a></li>
       <li><a href="{{ route('klub.index') }}">kluby</a></li>
+      <li><a href="{{ route('rozgrywki.index') }}">rozgrywki</a></li>
     </ul>
   </nav>
 
