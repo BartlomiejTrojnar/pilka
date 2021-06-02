@@ -69,11 +69,22 @@ class PlayerController extends Controller
      * @param  \App\Player  $player
      * @return \Illuminate\Http\Response
      */
-    public function show(Player $player)
+    public function show($id, $view='', PlayerRepository $playerRepo)
     {
-        //
-    }
+        if( empty(session() -> get('playerView')) )  session() -> put('playerView', 'showInfo');
+        if($view)  session() -> put('playerView', $view);
+        session() -> put('playerSelected', $id);
+        $player = $playerRepo -> find($id);
+        $previous = $playerRepo -> PreviousRecordId($id);
+        $next = $playerRepo -> NextRecordId($id);
 
+        return view('player.show', ["player"=>$player, "previous"=>$previous, "next"=>$next]);
+        //-> nest('subView', 'country.showInfo', ["country"=>$country]);
+}
+
+
+
+        
     public function edit($id, CountryRepository $countryRepo)
     {
         $countries = $countryRepo -> getAllSorted();
