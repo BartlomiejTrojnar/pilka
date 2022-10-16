@@ -12,30 +12,31 @@ class ClubController extends Controller
 {
     public function index(ClubRepository $clubRepo)  {
         $clubs = $clubRepo -> getAllSortedAndPaginate();
-        return view('club.index')
-            -> nest('clubTable', 'club.table', ["clubs"=>$clubs, "subTitle"=>"", "links"=>true]);
+        $clubsTable = view('club.tableForIndex', ["clubs"=>$clubs, "subTitle"=>"", "links"=>true]);
+        return view('club.index', ["clubsTable"=>$clubsTable]);
     }
 
     public function order($column)  {
         if(session()->get('ClubOrder[0]') == $column)
-          if(session()->get('ClubOrder[1]') == 'desc')
+            if(session()->get('ClubOrder[1]') == 'desc')    session()->put('ClubOrder[1]', 'asc');
+            else    session()->put('ClubOrder[1]', 'desc');
+        else {
+            session()->put('ClubOrder[2]', session()->get('ClubOrder[0]'));
+            session()->put('ClubOrder[0]', $column);
+            session()->put('ClubOrder[3]', session()->get('ClubOrder[1]'));
             session()->put('ClubOrder[1]', 'asc');
-          else
-            session()->put('ClubOrder[1]', 'desc');
-        else
-        {
-          session()->put('ClubOrder[2]', session()->get('ClubOrder[0]'));
-          session()->put('ClubOrder[0]', $column);
-          session()->put('ClubOrder[3]', session()->get('ClubOrder[1]'));
-          session()->put('ClubOrder[1]', 'asc');
         }
-
         return redirect( $_SERVER['HTTP_REFERER'] );
     }
 
-    public function create()  {
+    public function create(Request $request) {
+        if($request->version == "forIndex")     return $this -> createRow();
+        return $request->version;
+    }
+
+    public function createRow()  {
         $countries = Country::all('name', 'id');
-        return view('club.create', ["countries"=>$countries]);
+        return view('club.createRow', ["countries"=>$countries]);
     }
 
     public function store(Request $request)  {
@@ -52,8 +53,7 @@ class ClubController extends Controller
         $club->year_of_establishment = $request->year_of_establishment;
         $club->country_id = $request->country_id;
         $club -> save();
-
-        return redirect( $request->history_view );
+        return $club->id;
     }
 
     public function show($id, $view='', ClubRepository $clubRepo)  {
@@ -76,11 +76,17 @@ class ClubController extends Controller
         }
     }
 
-    public function edit($id)  {
-        $club = Club::find($id);
-        $countries = Country::all();
-        return view('club.edit', ["club"=>$club])
-            -> nest('countrySelectField', 'country.selectField', ["countries"=>$countries, "countrySelected"=>$club->country_id]);
+    public function edit(Request $request) {
+    //    $club = Club::find($id);
+    if( $request->version=="forIndex" )   return $this -> editRow($request->id);
+        //if( $request->version=="forGrade" )     return $this -> editRowForGrade($request->id, $sgRepo, $studentRepo, $syRepo);
+        return $request->version;
+    }
+
+    private function editRow($id)  {
+    //    $countries = Country::all();
+    //    return view('club.edit', ["club"=>$club])
+    //        -> nest('countrySelectField', 'country.selectField', ["countries"=>$countries, "countrySelected"=>$club->country_id]);
     }
 
     public function update(Request $request, $id)  {
@@ -105,5 +111,15 @@ class ClubController extends Controller
         $club = Club::find($id);
         $club -> delete();
         return redirect( $_SERVER['HTTP_REFERER'] );
+    }
+
+    public function refreshRow(Request $request, Club $club) {
+        $club = $club -> find($request->id);
+        if( $request->version=="forIndex" )     
+            return view('club.row', ["club"=>$club]);
+        return $request->version;
+
+        //$studentGrade = $studentGrade -> find($request->id);
+        //return view('studentGrade.row', ["studentGrade"=>$studentGrade]);
     }
 }

@@ -1,8 +1,3 @@
-@if( !empty( $links ) )
-  {{ $referees->render() }}
-@endif
-
-<h2>{{ $subTitle }}</h2>
 <table id="referees">
   <thead>
     <tr>

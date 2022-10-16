@@ -19,9 +19,9 @@ class RefereeController extends Controller
         if( $countrySelected ) {
             $referees = Referee::where('country_id', $countrySelected);
             $referees = $refereeRepo -> sortAndPaginateRecords($referees);
-        }
-        return view('referee.index')
-            -> nest('refereeTable', 'referee.table', ["referees"=>$referees, "links"=>true, "subTitle"=>"", "countrySelectField"=>$countrySelectField]);
+        }        
+        $tableForIndex = view('referee.tableForIndex', ["referees"=>$referees, "countrySelectField"=>$countrySelectField]);
+        return view('referee.index', ["referees"=>$referees, "tableForIndex"=>$tableForIndex]);
     }
 
     public function order($column)

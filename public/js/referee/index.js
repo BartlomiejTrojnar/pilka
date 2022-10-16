@@ -15,4 +15,5 @@ function countryChanged() {
 // ----------------------------------- ZAŁADOWANIE DOKUMENTU ------------------------------------ //
 $(document).ready(function() {
     countryChanged();
+    alert(18);
 });

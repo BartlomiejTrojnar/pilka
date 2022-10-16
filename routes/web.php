@@ -6,13 +6,14 @@ Route::get('/panstwo/order/{column}', 'CountryController@order')->name('panstwo.
 Route::get('/panstwo/{id}/{view?}', 'CountryController@show');
 
 Route::resource('/sedzia', 'RefereeController');
-Route::get('/sedzia/order/{column}', 'RefereeController@order')->name('sedzia.order');
+Route::get('/sedzia/orderBy/{column}', 'RefereeController@orderBy')->name('sedzia.orderBy');
 
 Route::resource('/stadion', 'StadiumController');
 Route::get('/stadion/order/{column}', 'StadiumController@order')->name('stadion.order');
 
+Route::post('/club/refreshRow', 'ClubController@refreshRow');
 Route::resource('/klub', 'ClubController');
-Route::get('/klub/order/{column}', 'ClubController@order')->name('klub.order');
+Route::get('/club/orderBy/{column}', 'ClubController@orderBy')->name('club.orderBy');
 Route::get('/klub/{id}/{view?}', 'ClubController@show');
 
 Route::resource('/rozgrywki', 'CompetitionController');
