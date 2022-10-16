@@ -1,4 +1,4 @@
-<!-------------------- (C) mgr inż. Bartłomiej Trojnar; (III) maj 2021 -------------------->
+<!-- **********************  (C) mgr inż. Bartłomiej Trojnar; 16.10.2022 ********************** -->
 <table id="referees">
    <thead>
       <tr>
@@ -13,7 +13,7 @@
          <th>aktywny</th>
          <th>data wpisania</th>
          <th>data aktualizacji</th>
-         <th>operacje</th>
+         <th>zmień / usuń</th>
       </tr> 
 
       @if(isset($countrySelectField))
@@ -45,6 +45,6 @@
          </tr>
        @endforeach
 
-      <tr class="create"><td colspan="10"><button id="showCreateRow" class="btn btn-primary"><i class="fa fa-plus"></i></button>
+      <tr class="create"><td colspan="10"><button id="showCreateRow"><i class="fa fa-plus"></i></button>
    </tbody>
 </table>
