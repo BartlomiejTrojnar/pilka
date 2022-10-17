@@ -1,5 +1,5 @@
 <?php
-// ------------------------ (C) mgr inż. Bartłomiej Trojnar; 16.10.2022 ------------------------ //
+// ------------------------ (C) mgr inż. Bartłomiej Trojnar; 17.10.2022 ------------------------ //
 namespace App\Http\Controllers;
 use App\Models\Referee;
 use App\Repositories\RefereeRepository;
@@ -41,9 +41,9 @@ class RefereeController extends Controller
         return redirect( $_SERVER['HTTP_REFERER'] );
     }
 
-    public function create(Request $request) {
-        $countries = Country::all('name', 'id');
-        $countrySF = "";
+    public function create() {
+        $countries = Country::all('id', 'symbol', 'name');
+        $countrySF = view('country.selectField', ["countries"=>$countries, "countrySelected"=>1]);
         return view('referee.create', ["countrySF"=>$countrySF]);
     }
 
@@ -55,16 +55,16 @@ class RefereeController extends Controller
         ]);
 
         $referee = new Referee;
-        $referee->first_name = $request->first_name;
-        $referee->last_name = $request->last_name;
-        $referee->country_id = $request->country_id;
-        $referee->district = $request->district;
+        $referee->first_name    = $request->first_name;
+        $referee->last_name     = $request->last_name;
+        $referee->country_id    = $request->country_id;
+        $referee->district      = $request->district;
         $referee->date_of_birth = $request->date_of_birth;
         if($request->active == "on") $referee->active = true;
         else $referee->active = false;
         $referee -> save();
 
-        return redirect( $request->history_view );
+        return $referee->id;
     }
 
     public function show($id, $view='', RefereeRepository $refereeRepo) {
@@ -86,12 +86,13 @@ class RefereeController extends Controller
         }
     }
 
-    public function edit($id, CountryRepository $countryRepo) {
+    public function edit(Request $request, Referee $referee, CountryRepository $countryRepo) {
+        $referee = $referee -> find($request->id);
         $countries = $countryRepo -> getAllSorted();
-        $referee = Referee::find($id);
-        return view('referee.edit', ["referee"=>$referee])
-             ->nest('countrySelectField', 'country.selectField', ["countries"=>$countries, "countrySelected"=>$referee->country_id]);
+        $countrySF = view('country.selectField', ["countries"=>$countries, "countrySelected"=>$referee->country_id]);
+        return view('referee.edit', ["referee"=>$referee, "lp"=>$request->lp, "countrySF"=>$countrySF]);
     }
+
 
     public function update($id, Request $request) {
         $referee = Referee::find($id);
@@ -118,5 +119,11 @@ class RefereeController extends Controller
         $referee = Referee::find($id);
         $referee -> delete();
         return redirect( $_SERVER['HTTP_REFERER'] );
+    }
+
+    public function refreshRow(Request $request, refereeRepository $refereeRepo) {
+        return 125;
+        $this->referee = $refereeRepo -> find($request->id);        
+        return view('referee.row', ["referee"=>$this->referee, "lp"=>$request->lp]);
     }
 }

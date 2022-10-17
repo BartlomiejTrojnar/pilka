@@ -5,8 +5,10 @@ Route::resource('/panstwo', 'CountryController');
 Route::get('/panstwo/order/{column}', 'CountryController@order')->name('panstwo.order');
 Route::get('/panstwo/{id}/{view?}', 'CountryController@show');
 
+Route::get('/sedzia/{id}/edit', 'RefereeController@edit')->name('sedzia.edit');
 Route::resource('/sedzia', 'RefereeController');
 Route::get('/sedzia/orderBy/{column}', 'RefereeController@orderBy')->name('sedzia.orderBy');
+Route::post('/sedzia/refreshRow', 'RefereeController@refreshRow');
 
 Route::resource('/stadion', 'StadiumController');
 Route::get('/stadion/order/{column}', 'StadiumController@order')->name('stadion.order');

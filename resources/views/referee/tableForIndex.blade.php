@@ -28,7 +28,6 @@
    <tbody>
       @foreach($referees as $referee)
          <tr data-referee_id="{{$referee->id}}">
-         <tr>
             <td>{{ $loop->iteration }}</td>
             <td>{{ $referee->first_name }}</td>
             <td><a href="{{ route('sedzia.show', $referee->id) }}">{{ $referee->last_name }}</a></td>
@@ -38,9 +37,9 @@
             <td>{{ $referee->active }}</td>
             <td>{{ $referee->created_at }}</td>
             <td>{{ $referee->updated_at }}</td>
-            <td class="edit destroy c">
-               <button class="edit btn btn-primary" data-referee_id="{{ $referee->id }}"><i class="fa fa-edit"></i></button>
-               <button class="destroy btn btn-primary" data-referee_id="{{ $referee->id }}"><i class="fas fa-remove"></i></button>
+            <td class="editDestroy">
+               <button data-referee_id="{{ $referee->id }}" class="edit"><i class="fa fa-edit"></i></button>
+               <button data-referee_id="{{ $referee->id }}" class="destroy"><i class="fas fa-remove"></i></button>
             </td>
          </tr>
        @endforeach
@@ -48,3 +47,4 @@
       <tr class="create"><td colspan="10"><button id="showCreateRow"><i class="fa fa-plus"></i></button>
    </tbody>
 </table>
+<p id="countReferees" hidden2>@if(!empty($loop->iteration)) {{ $loop->iteration }} @else 0 @endif</p>
