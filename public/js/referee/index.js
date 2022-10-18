@@ -1,4 +1,4 @@
-// ------------------------ (C) mgr inż. Bartłomiej Trojnar; 16.10.2022 ------------------------ //
+// ------------------------ (C) mgr inż. Bartłomiej Trojnar; 18.10.2022 ------------------------ //
 
 // ----------------------------- wybór państwa w polu select ----------------------------- //
 function countryChanged() {
@@ -7,8 +7,8 @@ function countryChanged() {
             type: "GET",
             url: "http://localhost/pilka/public/panstwo/"+ $(this).val() +"/change",
             data: { country_id: $(this).val() },
-            success: function(result) { window.location.reload(); },
-            error: function(result) { window.location.reload(); },
+            success: function() { window.location.reload(); },
+            error: function() { window.location.reload(); },
         });
         return false;
     });
@@ -27,7 +27,7 @@ function showCreateRow() {
         method: "GET",
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         url: "http://localhost/pilka/public/sedzia/create",
-        success: function(result) { $('table#referees').append(result); },
+        success: function(result) { $('table#referees tr.create').before(result); },
         error: function() {
             var error = '<tr><td colspan="10" class="error" hidden>Błąd tworzenia wiersza z formularzem dodawania sędziego.</td></tr>';
             $('table#referees tr.create').after(error);
@@ -55,8 +55,7 @@ function add() {   // zapisanie klasy w bazie danych
     var country_id      = $('#createRow select[name="country_id"]').val();
     var district        = $('#createRow input[name="district"]').val();
     var date_of_birth   = $('#createRow input[name="date_of_birth"]').val();
-    var active          = $('#createRow input[name="active"]').val();
-    if(active=='on')    active = 1;     else active = 0;
+    var active          = $('#createRow input[name="active"]').prop('checked');
     var lp = $('#countReferees').val()-1+2;
 
     $.ajax({
@@ -65,7 +64,7 @@ function add() {   // zapisanie klasy w bazie danych
         url: "http://localhost/pilka/public/sedzia",
         data: { first_name: first_name, last_name: last_name, country_id: country_id, district: district, date_of_birth: date_of_birth, active: active },
         success: function(id) {
-            addRow(id, lp);
+            refreshRow(id, lp);
             $('#countReferees').html(lp);
         },
         error: function() {
@@ -75,17 +74,22 @@ function add() {   // zapisanie klasy w bazie danych
     });
 }
 
-function addRow(id, lp=0) {  // utworzenie wiersza z sędzią o podanym identyfikatorze
-    alert(id);
-    alert(lp);
+function refreshRow(id, lp=0, version="add") {  // utworzenie wiersza z sędzią o podanym identyfikatorze
     $.ajax({
         method: "POST",
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         url: "http://localhost/pilka/public/sedzia/refreshRow",
         data: { id: id, lp: lp },
         success: function(result) {
-            $('tr.create').before(result);
-            $('#showCreateRow').show();
+            if(version=="add") {
+                $('tr.create').before(result);
+                $('tr[data-referee_id="'+id+'"]').fadeIn(1500);
+                $('#showCreateRow').show();
+            }
+            else {
+                $('tr[data-referee_id="'+id+'"]').replaceWith(result);
+                $('tr[data-referee_id="'+id+'"]').fadeIn(1500);
+            }
         },
         error: function() {
             var error = '<tr><td class="error" colspan="10">Błąd odświeżania wiersza sędziego.</td></tr>';
@@ -104,8 +108,11 @@ function editClick() {     // kliknięcie przycisku modyfikowania sędziego
             url: "http://localhost/pilka/public/sedzia/"+id+"/edit",
             data: { id: id, lp: lp },
             success: function(result) {
-                $('tr[data-referee_id='+id+']').before(result).hide();
-                updateClick();
+                $.when( $('tr[data-referee_id='+id+']').fadeOut(500) ).then(function() {
+                    $('tr[data-referee_id='+id+']').replaceWith(result);
+                    $('tr[data-referee_id='+id+'].editRow').fadeIn(1500);
+                    updateClick();
+                });
             },
             error: function() {
                 var error = '<tr><td colspan="10" class="error">Błąd tworzenia wiersza z formularzem modyfikowania sędziego.</td></tr>';
@@ -117,50 +124,61 @@ function editClick() {     // kliknięcie przycisku modyfikowania sędziego
 
 function updateClick() {     // ustawienie instrukcji po kliknięciu anulowania lub potwierdzenia modyfikowania klasy
     $('.cancelUpdate').click(function() {
-        alert('Dokończyć funkcję updateClick - skrypt referee/index.js');
-        // var id = $(this).data('grade_id');
-        // $('.editRow[data-grade_id='+id+']').remove();
-        // $('tr[data-grade_id='+id+']').show();
+        var id = $(this).data('referee_id');
+        $.when( $('.editRow[data-referee_id='+id+']').fadeOut(500) ).then( function() {
+            var lp = $('tr[data-referee_id='+id+'] input[name="lp"]').val();
+            refreshRow(id, lp, "edit");
+        });
     });
 
     $('.update').click(function(){
-        alert('Dokończyć funkcję updateClick - skrypt referee/index.js');
-        // var id = $(this).data('grade_id');
-        // update(id);
+        var id = $(this).data('referee_id');
+        $.when( $('.editRow[data-referee_id='+id+']').fadeOut(500) ).then( function() {
+            update(id);
+        });
     });
 }
 
 function update(id) {   // zapisanie klasy w bazie danych
-    var year_of_beginning   = $('tr[data-grade_id='+id+'] input[name="year_of_beginning"]').val();
-    var year_of_graduation  = $('tr[data-grade_id='+id+'] input[name="year_of_graduation"]').val();
-    var symbol              = $('tr[data-grade_id='+id+'] input[name="symbol"]').val();
-    var school_id           = $('tr[data-grade_id='+id+'] select[name="school_id"]').val();
-    var lp                  = $('tr[data-grade_id='+id+'] input[name="lp"]').val();
+    var first_name      = $('tr[data-referee_id='+id+'] input[name="first_name"]').val();
+    var last_name       = $('tr[data-referee_id='+id+'] input[name="last_name"]').val();
+    var country_id      = $('tr[data-referee_id='+id+'] select[name="country_id"]').val();
+    var district        = $('tr[data-referee_id='+id+'] input[name="district"]').val();
+    var date_of_birth   = $('tr[data-referee_id='+id+'] input[name="date_of_birth"]').val();
+    var active          = $('tr[data-referee_id='+id+'] input[name="active"]').prop('checked');
+    var lp              = $('tr[data-referee_id='+id+'] input[name="lp"]').val();
 
     $.ajax({
         method: "PUT",
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-        url: "http://localhost/school/klasa/"+id,
-        data: { id: id, year_of_beginning: year_of_beginning, year_of_graduation: year_of_graduation, symbol: symbol, school_id: school_id },
-        success: function() { refreshRow(id, lp, "forIndex"); },
+        url: "http://localhost/pilka/public/sedzia/"+id,
+        data: { id: id, first_name: first_name, last_name: last_name, country_id: country_id, district: district, date_of_birth: date_of_birth, active: active },
+        success: function(result) {  refreshRow(id, lp, "edit"); },
         error: function() {
-            var error = '<tr><td colspan="4" class="error">Błąd modyfikowania klasy.</td></tr>';
-            $('tr[data-grade_id='+id+'].editRow').after(error).hide();
+            var error = '<tr><td colspan="10" class="error">Błąd modyfikowania sędziego.</td></tr>';
+            $('tr[data-referee_id='+id+'].editRow').replaceWith(error);
         },
     });
 }
 
 function destroyClick() {  // usunięcie klasy (z bazy danych)
-    $('table#grades').delegate('button.destroy', 'click', function() {
-        var id = $(this).data('grade_id');
+    $('table#referees').delegate('button.destroy', 'click', function() {
+        var id = $(this).data('referee_id');
         $.ajax({
             type: "DELETE",
             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-            url: "http://localhost/school/klasa/" + id,
-            success: function() { $('tr[data-grade_id='+id+']').remove(); },
+            url: "http://localhost/pilka/public/sedzia/" + id,
+            success: function() {
+                $.when( $('tr[data-referee_id='+id+']').animate({height: "0px"}, 500).fadeOut(500) ).then( function() {
+                    $('tr[data-referee_id='+id+']').remove();
+                 });
+            },
             error: function() {
-                var error = '<tr><td colspan="4" class="error">Błąd usuwania klasy.</td></tr>';
-                $('tr[data-grade_id='+id+']').after(error).hide();
+                var error = '<tr><td colspan="10" class="error" hidden style="height: 5px; padding: 0;">Błąd usuwania sędziego.</td></tr>';
+                $.when( $('tr[data-referee_id='+id+']').fadeOut(500) ).then( function() {
+                   $('tr[data-referee_id='+id+']').after(error).remove();
+                   $('td.error').fadeIn(250).animate({padding: "20px"}, 1000);
+                });
             }
         });
         return false;
@@ -170,9 +188,9 @@ function destroyClick() {  // usunięcie klasy (z bazy danych)
 
 // ----------------------------------- ZAŁADOWANIE DOKUMENTU ------------------------------------ //
 $(document).ready(function() {
-//    countryChanged();
+    countryChanged();
     showCreateRowClick();
     addClick();
     editClick();
-//    destroyClick();
+    destroyClick();
 });

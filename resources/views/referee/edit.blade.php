@@ -1,5 +1,5 @@
-<!-- **********************  (C) mgr inż. Bartłomiej Trojnar; 17.10.2022 ********************** -->
-<tr class="editRow" data-referee_id="{{ $referee->id }}">
+<tr class="editRow" data-referee_id="{{ $referee->id }}" hidden>
+<!-- **********************  (C) mgr inż. Bartłomiej Trojnar; 18.10.2022 ********************** -->
    <form action="{{ route('sedzia.update', $referee->id) }}" method="post" role="form">
       {{ csrf_field() }}
       {{ method_field('PATCH') }}
@@ -12,7 +12,7 @@
       <td><?php   print_r($countrySF);  ?></td>
       <td><input type="text" name="district" size="20" maxlength="25" value="{{$referee->district}}" /></td>
       <td><input type="date" name="date_of_birth" value="{{$referee->date_of_birth}}" /></td>
-      <td><input type="checkbox" name="active" value="{{$referee->active}}" /></td>
+      <td><input type="checkbox" name="active" @if($referee->active) checked @endif /></td>
 
       <!-- komórka z przyciskami potwierdzenia zmiany i anulowania -->
       <td colspan="3" class="editRowButtons">

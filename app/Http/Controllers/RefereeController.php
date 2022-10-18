@@ -1,5 +1,5 @@
 <?php
-// ------------------------ (C) mgr inż. Bartłomiej Trojnar; 17.10.2022 ------------------------ //
+// ------------------------ (C) mgr inż. Bartłomiej Trojnar; 18.10.2022 ------------------------ //
 namespace App\Http\Controllers;
 use App\Models\Referee;
 use App\Repositories\RefereeRepository;
@@ -60,8 +60,7 @@ class RefereeController extends Controller
         $referee->country_id    = $request->country_id;
         $referee->district      = $request->district;
         $referee->date_of_birth = $request->date_of_birth;
-        if($request->active == "on") $referee->active = true;
-        else $referee->active = false;
+        if($request->active=="true")    $referee->active = 1;   else $referee->active = 0;
         $referee -> save();
 
         return $referee->id;
@@ -93,37 +92,33 @@ class RefereeController extends Controller
         return view('referee.edit', ["referee"=>$referee, "lp"=>$request->lp, "countrySF"=>$countrySF]);
     }
 
-
-    public function update($id, Request $request) {
-        $referee = Referee::find($id);
-
+    public function update(Request $request, Referee $referee) {
         $this -> validate($request, [
-          'first_name' => 'required',
-          'last_name' => 'required',
-          'country_id' => 'required',
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'country_id' => 'required',
         ]);
 
-        $referee->first_name = $request->first_name;
-        $referee->last_name = $request->last_name;
-        $referee->country_id = $request->country_id;
-        $referee->district = $request->district;
+        $referee = $referee -> find($request->id);
+        $referee->first_name    = $request->first_name;
+        $referee->last_name     = $request->last_name;
+        $referee->country_id    = $request->country_id;
+        $referee->district      = $request->district;
         $referee->date_of_birth = $request->date_of_birth;
-        if($request->active == "on") $referee->active = true;
-          else $referee->active = false;
+        if($request->active=="true")    $referee->active = 1;   else $referee->active = 0;
         $referee -> save();
 
-        return redirect( $request->history_view );
+        return $referee->id;
     }
 
-    public function destroy($id) {
-        $referee = Referee::find($id);
+    public function destroy($id, Referee $referee) {
+        $referee = $referee -> find($id);
         $referee -> delete();
-        return redirect( $_SERVER['HTTP_REFERER'] );
+        return 1;
     }
 
-    public function refreshRow(Request $request, refereeRepository $refereeRepo) {
-        return 125;
-        $this->referee = $refereeRepo -> find($request->id);        
+    public function refreshRow(Request $request, Referee $referee) {
+        $this->referee = $referee -> find($request->id);
         return view('referee.row', ["referee"=>$this->referee, "lp"=>$request->lp]);
     }
 }

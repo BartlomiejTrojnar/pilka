@@ -1,5 +1,5 @@
-<!-- **********************  (C) mgr inż. Bartłomiej Trojnar; 16.10.2022 ********************** -->
 <table id="referees">
+<!-- **********************  (C) mgr inż. Bartłomiej Trojnar; 18.10.2022 ********************** -->
    <thead>
       <tr>
          <th>id</th>
@@ -28,15 +28,15 @@
    <tbody>
       @foreach($referees as $referee)
          <tr data-referee_id="{{$referee->id}}">
-            <td>{{ $loop->iteration }}</td>
+            <td>{{ $n=$loop->iteration }}</td>
             <td>{{ $referee->first_name }}</td>
             <td><a href="{{ route('sedzia.show', $referee->id) }}">{{ $referee->last_name }}</a></td>
             <td><a href="{{ route('panstwo.show', $referee->country_id) }}">{{ $referee->country->name }}</a></td>
             <td>{{ $referee->district }}</td>
             <td>{{ $referee->date_of_birth }}</td>
             <td>{{ $referee->active }}</td>
-            <td>{{ $referee->created_at }}</td>
-            <td>{{ $referee->updated_at }}</td>
+            <td class="small">{{ substr($referee->created_at, 0, 10) }}</td>
+            <td class="small">{{ substr($referee->updated_at, 0, 10) }}</td>
             <td class="editDestroy">
                <button data-referee_id="{{ $referee->id }}" class="edit"><i class="fa fa-edit"></i></button>
                <button data-referee_id="{{ $referee->id }}" class="destroy"><i class="fas fa-remove"></i></button>
@@ -47,4 +47,4 @@
       <tr class="create"><td colspan="10"><button id="showCreateRow"><i class="fa fa-plus"></i></button>
    </tbody>
 </table>
-<p id="countReferees" hidden2>@if(!empty($loop->iteration)) {{ $loop->iteration }} @else 0 @endif</p>
+<p id="countReferees" hidden2>@if(!empty($n)) {{ $n }} @else 0 @endif</p>
