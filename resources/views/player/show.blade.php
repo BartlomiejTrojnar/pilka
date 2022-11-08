@@ -19,8 +19,5 @@
       <li class="nav-item"><a class="nav-link" href="{{ route('zawodnik.index') }}">powrót <i class='fa fa-undo'></i></a></li>
    </ul>
 
-   {{{$player->first_name}}} <strong> {{{$player->last_name}}} </strong> ({{$player->country->name}})
-
-   <p><a href="{{url('zawodnicy/'.$player->id.'/edit')}}"><span class="glyphicon glyphicon-edit"></span> Edycja </a></p>
-   <p><a href="{{url('zawodnicy/'.$player->id.'/delete')}}"><span class="glyphicon glyphicon-trash"></span> Usunięcie </a></p>
+   <?php echo $subView; ?>
 @endsection

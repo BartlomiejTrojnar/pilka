@@ -84,10 +84,7 @@ tr:nth-of-type(even){ background: #5b5; }
 tr:nth-of-type(odd)	{ background: #7e7; }
 tr.submit, tr.create { text-align: center; }
 tr:hover { background: #494; }
-td, th {
-    padding: 2px 5px;
-    border: 1px solid #000;
-}
+
 th {
     background: #5c5;
     line-height: 20px;
@@ -95,8 +92,16 @@ th {
     text-align: center;
     font-size: 14px;
 }
+td, th {
+    padding: 2px 5px;
+    border: 1px solid #000;
+}
+td.created, td.updated {
+    font-size: 0.9em;
+    text-align: center;
+    font-style: italic;
+}
 tr.create td { padding: 2px; }
-tr.create button { width: 80%; }
 td.edit, td.destroy {
     padding: 0;
     width: 36px;
@@ -109,6 +114,7 @@ td.error {
     font-size: 18px;
     font-weight: bold;
 }
+tr.create button { width: 80%; }
 
 
 /* ----------------------------------------- HIPERŁĄCZA ----------------------------------------- */

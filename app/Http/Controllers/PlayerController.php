@@ -63,30 +63,19 @@ class PlayerController extends Controller
         return redirect( $request->history_view );
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Player  $player
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id, $view='', PlayerRepository $playerRepo)
-    {
+    public function show($id, $view='', PlayerRepository $playerRepo)  {
         if( empty(session() -> get('playerView')) )  session() -> put('playerView', 'showInfo');
         if($view)  session() -> put('playerView', $view);
         session() -> put('playerSelected', $id);
         $player = $playerRepo -> find($id);
         $previous = $playerRepo -> PreviousRecordId($id);
         $next = $playerRepo -> NextRecordId($id);
+        $playerInfo = view('player.info', ["player"=>$player]);
 
-        return view('player.show', ["player"=>$player, "previous"=>$previous, "next"=>$next]);
-        //-> nest('subView', 'country.showInfo', ["country"=>$country]);
-}
+        return view('player.show', ["player"=>$player, "previous"=>$previous, "next"=>$next, "subView"=>$playerInfo]);
+    }
 
-
-
-        
-    public function edit($id, CountryRepository $countryRepo)
-    {
+    public function edit($id, CountryRepository $countryRepo)  {
         $countries = $countryRepo -> getAllSorted();
         $player = Player::find($id);
         return view('player.edit', ["player"=>$player])
@@ -114,8 +103,7 @@ class PlayerController extends Controller
         return redirect( $request->history_view );
     }
 
-    public function destroy($id)
-    {
+    public function destroy($id)  {
         $player = Player::find($id);
         $player -> delete();
         return redirect( $_SERVER['HTTP_REFERER'] );
