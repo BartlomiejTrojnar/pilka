@@ -12,6 +12,7 @@ Route::post('/sedzia/refreshRow', 'RefereeController@refreshRow');
 
 Route::resource('/stadion', 'StadiumController');
 Route::get('/stadion/order/{column}', 'StadiumController@order')->name('stadion.order');
+Route::post('/stadion/refreshRow', 'StadiumController@refreshRow');
 
 Route::post('/club/refreshRow', 'ClubController@refreshRow');
 Route::resource('/klub', 'ClubController');

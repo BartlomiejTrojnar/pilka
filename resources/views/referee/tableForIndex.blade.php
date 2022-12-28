@@ -27,7 +27,7 @@
 
    <tbody>
       @foreach($referees as $referee)
-         <tr data-referee_id="{{$referee->id}}">
+         <tr data-referee_id="{{ $referee->id }}">
             <td>{{ $n=$loop->iteration }}</td>
             <td>{{ $referee->first_name }}</td>
             <td><a href="{{ route('sedzia.show', $referee->id) }}">{{ $referee->last_name }}</a></td>
@@ -47,4 +47,4 @@
       <tr class="create"><td colspan="10"><button id="showCreateRow"><i class="fa fa-plus"></i></button>
    </tbody>
 </table>
-<p id="countReferees" hidden2>@if(!empty($n)) {{ $n }} @else 0 @endif</p>
+<input id="countReferees" type="text" value="@if(!empty($n)) {{ $n }} @else 0 @endif" />

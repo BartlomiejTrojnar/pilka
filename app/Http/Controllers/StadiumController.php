@@ -1,18 +1,69 @@
 <?php
+// ------------------------ (C) mgr inż. Bartłomiej Trojnar; 28.12.2022 ------------------------ //
 namespace App\Http\Controllers;
 use App\Models\Stadium;
 use App\Repositories\StadiumRepository;
 use Illuminate\Http\Request;
 
-class StadiumController extends Controller
-{
-    public function index(StadiumRepository $stadiumRepo)
-    {
-        $stadiums = $stadiumRepo -> getAllSortedAndPaginate();
-        return view('stadium.index')
-            -> nest('stadiumTable', 'stadium.table', ["stadiums"=>$stadiums, "links"=>true, "subTitle"=>""]);
-    }
+class StadiumController extends Controller {
+   public function index(StadiumRepository $stadiumRepo) {
+      $stadiums = $stadiumRepo -> getAllSortedAndPaginate();
+      $stadiumsTable = view('stadium.table', ["stadiums"=>$stadiums]);
+      return view('stadium.index', ["stadiumsTable"=>$stadiumsTable]);
+   }
 
+   public function create() {
+      return view('stadium.create');
+   }
+
+   public function store(Request $request) {
+      $this -> validate($request, [
+         'city' => 'required',
+         'name' => 'required',
+      ]);
+
+      $stadium = new Stadium;
+      $stadium->city = $request->city;
+      $stadium->name = $request->name;
+      $stadium->capacity = $request->capacity;
+      $stadium -> save();
+
+      return $stadium->id;
+   }
+
+   public function refreshRow(Request $request, Stadium $stadium) {
+      $this->stadium = $stadium -> find($request->id);
+      return view('stadium.row', ["stadium"=>$this->stadium, "lp"=>$request->lp]);
+   }
+
+   public function edit(Request $request) {
+      $stadium = Stadium::find($request->id);
+      return view('stadium.edit', ["stadium"=>$stadium, "lp"=>$request->lp]);
+   }
+
+   public function update(Request $request, Stadium $stadium) {
+      $this -> validate($request, [
+         'city' => 'required',
+         'name' => 'required',
+      ]);
+
+      $stadium = Stadium::find($request->id);
+      $stadium->city = $request->city;
+      $stadium->name = $request->name;
+      $stadium->capacity = $request->capacity;
+      $stadium -> save();
+
+      return $stadium->id;
+   }
+
+   public function destroy($id, Stadium $stadium) {
+      $stadium = Stadium::find($id);
+      $stadium -> delete();
+      return 1;
+   }
+
+
+/*
     public function order($column)
     {
         if(session()->get('StadiumOrder[0]') == $column)
@@ -31,26 +82,6 @@ class StadiumController extends Controller
         return redirect( $_SERVER['HTTP_REFERER'] );
     }
 
-    public function create()
-    {
-        return view('stadium.create');
-    }
-
-    public function store(Request $request)
-    {
-        $this -> validate($request, [
-          'city' => 'required',
-          'name' => 'required',
-        ]);
-
-        $stadium = new Stadium;
-        $stadium->city = $request->city;
-        $stadium->name = $request->name;
-        $stadium->capacity = $request->capacity;
-        $stadium -> save();
-
-        return redirect( $request->history_view );
-    }
 
     public function show($id, $view='', StadiumRepository $stadiumRepo)
     {
@@ -72,32 +103,6 @@ class StadiumController extends Controller
         }
     }
 
-    public function edit($id)
-    {
-        $stadium = Stadium::find($id);
-        return view('stadium.edit', ["stadium"=>$stadium]);
-    }
 
-    public function update(Request $request, $id, Stadium $stadium)
-    {
-        $this -> validate($request, [
-          'city' => 'required',
-          'name' => 'required',
-        ]);
-
-        $stadium = Stadium::find($id);
-        $stadium->city = $request->city;
-        $stadium->name = $request->name;
-        $stadium->capacity = $request->capacity;
-        $stadium -> save();
-
-        return redirect( $request->history_view );
-    }
-
-    public function destroy($id, Stadium $stadium)
-    {
-        $stadium = Stadium::find($id);
-        $stadium -> delete();
-        return redirect( $_SERVER['HTTP_REFERER'] );
-    }
+   */
 }

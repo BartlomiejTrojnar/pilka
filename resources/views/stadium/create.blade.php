@@ -1,28 +1,15 @@
-@extends('layouts.app')
+<!-- **********************  (C) mgr inż. Bartłomiej Trojnar; 28.12.2022 ********************** -->
+<tr id="createRow">
+   <form action="{{ route('stadion.store') }}" method="post" role="form">
+      {{ csrf_field() }}
+      <td colspan="2"><input type="text" name="city" size="15" maxlength="15" /></td>
+      <td><input type="text" name="name" size="22" maxlength="25" /></td>
+      <td><input type="text" name="capacity" size="5" maxlength="5" /></td>
 
-@section('main-content')
-  <h1>Dodawanie stadionu</h1>
-  <form action="{{ route('stadion.store') }}" method="post" role="form">
-  {{ csrf_field() }}
-    <table>
-      <tr>
-        <th><label for="city">miasto</label></th>
-        <td><input type="text" name="city" size="15" maxlength="15" /></td>
-      </tr>
-      <tr>
-        <th><label for="name">nazwa</label></th>
-        <td><input type="text" name="name" size="22" maxlength="25" /></td>
-      </tr>
-      <tr>
-        <th><label for="capacity">pojemność</label></th>
-        <td><input type="text" name="capacity" size="5" maxlength="5" /></td>
-      </tr>
-
-      <tr class="submit"><td colspan="2">
-          <input type="hidden" name="history_view" value="{{ $_SERVER['HTTP_REFERER'] }}" />
-          <button class="btn btn-success" type="submit">dodaj</button>
-          <a class="btn btn-success" href="{{ $_SERVER['HTTP_REFERER'] }}">anuluj</a>
-      </td></tr>
-    </table>
-  </form>
-@endsection
+      <!-- komórka z przyciskami dodawania i anulowania -->
+      <td class="create" colspan="3">
+         <button id="add">dodaj</button>
+         <button id="cancelAdd">anuluj</button>
+      </td>
+   </form>
+</tr>
