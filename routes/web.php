@@ -11,8 +11,9 @@ Route::get('/sedzia/orderBy/{column}', 'RefereeController@orderBy')->name('sedzi
 Route::post('/sedzia/refreshRow', 'RefereeController@refreshRow');
 
 Route::resource('/stadion', 'StadiumController');
-Route::get('/stadion/order/{column}', 'StadiumController@order')->name('stadion.order');
 Route::post('/stadion/refreshRow', 'StadiumController@refreshRow');
+Route::get('/stadion/order/{column}', 'StadiumController@order')->name('stadion.order');
+Route::get('/stadion/{id}/{view?}', 'StadiumController@show');
 
 Route::post('/club/refreshRow', 'ClubController@refreshRow');
 Route::resource('/klub', 'ClubController');
