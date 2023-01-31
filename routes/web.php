@@ -20,6 +20,7 @@ Route::resource('/klub', 'ClubController');
 Route::get('/club/orderBy/{column}', 'ClubController@orderBy')->name('club.orderBy');
 Route::get('/klub/{id}/{view?}', 'ClubController@show');
 
+Route::get('/rozgrywki/create', 'CompetitionController@create');
 Route::resource('/rozgrywki', 'CompetitionController');
 Route::get('/rozgrywki/order/{column}', 'ClubController@order')->name('rozgrywki.order');
 
