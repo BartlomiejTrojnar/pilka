@@ -4,11 +4,11 @@ const FADE_OUT=575, FADE_IN=1275;
 
 // --------------------- odświeżanie i dowawanie wierszy w tabeli rekordów --------------------- //
 export class RefreshRowService {
-    // constructor(numberOfFields, tableName, dataName) {
-        // this.numberOfFields = numberOfFields;
-        // this.tableName = tableName;
-        // this.dataName = dataName;
-    // }
+    constructor(numberOfFields, tableName, dataName) {
+        this.numberOfFields = numberOfFields;
+        this.tableName = tableName;
+        this.dataName = dataName;
+    }
 
     // error(id, operation, communique) {  // błąd w trakcie odświeżania
         // var error = '<tr data-' +this.dataName+ '="' +id+ '"><td class="error" colspan="' +this.numberOfFields+ '">' +communique+ '</td></tr>';
@@ -17,12 +17,12 @@ export class RefreshRowService {
         // $('td.error').hide(5).fadeIn(FADE_IN);
     // }
 
-    // addError(communique) {              // niepowodzenie wstawienia rekordu do bazy danych
-        // $('tr#createRow').remove();
-        // var error = '<tr><td colspan="' +this.numberOfFields+ '" class="error">' +communique+ '</td></tr>';
-        // $(this.tableName+ ' tr.create').before(error);
-        // $('td.error').hide().fadeIn(FADE_IN);
-    // }
+    addError(communique) {              // niepowodzenie wstawienia rekordu do bazy danych
+        $('tr#createRow').remove();
+        var error = '<tr><td colspan="' +this.numberOfFields+ '" class="error">' +communique+ '</td></tr>';
+        $(this.tableName+ ' tr.create').before(error);
+        $('td.error').hide().fadeIn(FADE_IN);
+    }
 
     // updateError(id, communique) {       // niepowodzenie w czasie zapisywania zmian w bazie danych
             // var error = '<tr><td colspan="' +this.numberOfFields+ '" class="error">' +communique+ '</td></tr>';

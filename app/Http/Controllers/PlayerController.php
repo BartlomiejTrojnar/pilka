@@ -9,18 +9,24 @@ use Illuminate\Http\Request;
 
 class PlayerController extends Controller
 {
+    public function create() {
+        $countries = Country::all('name', 'id');
+        $countrySelected = session()->get('countrySelected');
+        $countrySF = view('country.selectField', ["countries"=>$countries, "countrySelected"=>$countrySelected]);
+        return view('player.create', ["countrySF"=>$countrySF]);
+    }
+
     public function index(PlayerRepository $playerRepo, CountryRepository $countryRepo) {
         $countries = $countryRepo -> getAllSorted();
         $countrySelected = session()->get('countrySelected');
-        $countrySelectField = view('country.selectField', ["countries"=>$countries, "countrySelected"=>$countrySelected]);
+        $countrySF = view('country.selectField', ["countries"=>$countries, "countrySelected"=>$countrySelected]);
 
         $players = $playerRepo -> getAllSortedAndPaginate();
         if( $countrySelected ) {
             $players = Player::where('country_id', $countrySelected);
             $players = $playerRepo -> sortAndPaginateRecords($players);
         }
-        return view('player.index')
-            -> nest('playerTable', 'player.table', ["players"=>$players, "links"=>true, "subTitle"=>"", "countrySelectField"=>$countrySelectField]);
+        return view('player.index', ["players"=>$players, "countrySF"=>$countrySF]);
     }
 
     public function order($column) {
@@ -36,11 +42,8 @@ class PlayerController extends Controller
 
         return redirect( $_SERVER['HTTP_REFERER'] );
     }
+/*
 
-    public function create() {
-        $countries = Country::all('name', 'id');
-        return view('player.create', ["countries"=>$countries]);
-    }
 
     public function store(Request $request) {
         $this -> validate($request, [
@@ -108,4 +111,5 @@ class PlayerController extends Controller
         $player -> delete();
         return redirect( $_SERVER['HTTP_REFERER'] );
     }
+*/
 }

@@ -1,5 +1,5 @@
-<!-- **********************  (C) mgr inż. Bartłomiej Trojnar; 16.10.2022 ********************** -->
 <tr id="createRow">
+<!-- **********************  (C) mgr inż. Bartłomiej Trojnar; 16.10.2022 ********************** -->
    <form action="{{ route('sedzia.store') }}" method="post" role="form">
       {{ csrf_field() }}
       <td colspan="2"><input type="text" name="first_name" size="20" maxlength="25" /></td>
